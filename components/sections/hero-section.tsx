@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowDown, ArrowRight, Download, Mail } from "lucide-react";
+import { ArrowRight, Download, Mail } from "lucide-react";
 import { ParticlesBackground } from "@/components/ui/particles-background";
 import { useSmoothScroll } from "@/components/ui/smooth-scroll-provider";
 import { heroRoles, socialLinks } from "@/data/site";
@@ -36,22 +36,22 @@ export function HeroSection() {
           variants={heroContainer}
         >
           <motion.div
-            className="glass-panel mb-6 inline-flex items-center gap-3 rounded-full px-5 py-3 text-sm text-text-secondary border border-white/10"
+            className="glass-panel mb-6 inline-flex items-center gap-3 rounded-full border border-white/10 px-5 py-3 text-sm text-text-secondary"
             variants={fadeUp}
           >
-            <span className="h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulseDot" />
+            <span className="h-2.5 w-2.5 animate-pulseDot rounded-full bg-emerald-400" />
             Available for Work
           </motion.div>
 
           <motion.p
-            className="text-lg text-text-secondary md:text-xl font-body"
+            className="font-body text-lg text-text-secondary md:text-xl"
             variants={fadeUp}
           >
             Hello, I&apos;m
           </motion.p>
 
           <motion.h1
-            className="mt-5 font-heading text-5xl font-bold tracking-tight text-white md:text-[80px] leading-tight"
+            className="font-heading text-5xl font-bold leading-tight tracking-tight text-white md:text-[80px]"
             transition={{ duration: 0.65, delay: 0.2 }}
             variants={{
               hidden: { opacity: 0, y: 40, scale: 0.95 },
@@ -62,7 +62,7 @@ export function HeroSection() {
           </motion.h1>
 
           <motion.div
-            className="mt-4 flex items-center justify-center font-heading text-3xl font-semibold md:text-5xl"
+            className="font-heading text-3xl font-semibold md:text-5xl mt-4 flex items-center justify-center"
             variants={fadeUp}
           >
             <span className="text-gradient">{typedRole}</span>
@@ -80,14 +80,14 @@ export function HeroSection() {
 
           <motion.div className="mt-10 flex flex-wrap justify-center gap-4" variants={fadeUp}>
             <button
-              className="accent-gradient glow-ring inline-flex items-center gap-2 rounded-full px-8 py-4 text-sm font-medium text-white transition duration-300 hover:scale-105 interactive-press"
+              className="accent-gradient glow-ring interactive-press inline-flex items-center gap-2 rounded-full px-8 py-4 text-sm font-medium text-white transition duration-300 hover:scale-105"
               onClick={() => scrollTo("#projects")}
               type="button"
             >
               View My Work <ArrowRight className="h-4 w-4" />
             </button>
             <a
-              className="glass-panel glass-hover inline-flex items-center gap-2 rounded-full border border-white/10 px-8 py-4 text-sm font-medium text-white interactive-press"
+              className="glass-panel glass-hover interactive-press inline-flex items-center gap-2 rounded-full border border-white/10 px-8 py-4 text-sm font-medium text-white"
               download
               href="/resume.pdf"
             >
@@ -103,11 +103,11 @@ export function HeroSection() {
               <motion.a
                 key={item.label}
                 aria-label={item.label}
-                className="group glass-panel relative inline-flex h-12 w-12 items-center justify-center overflow-hidden rounded-full border border-white/10 transition-transform duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan"
+                className="glass-panel group relative inline-flex h-12 w-12 items-center justify-center overflow-hidden rounded-full border border-white/10 transition-transform duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan"
                 href={item.href}
                 rel="noreferrer"
-                target="_blank"
                 style={{ borderColor: "rgba(255,255,255,0.08)" }}
+                target="_blank"
                 transition={{ delay: 0.4 + index * 0.08, duration: 0.22 }}
                 whileHover={{ scale: 1.05, y: -3 }}
                 whileTap={{ scale: 0.97 }}
@@ -121,7 +121,7 @@ export function HeroSection() {
                 />
                 <span
                   className="relative z-10 transition-colors duration-300 group-hover:text-white"
-                style={{ color: item.color }}
+                  style={{ color: item.color }}
                 >
                   <SocialIcon type={item.icon} />
                 </span>
@@ -129,18 +129,6 @@ export function HeroSection() {
             ))}
           </motion.div>
         </motion.div>
-
-        <motion.button
-          animate={{ opacity: 1 }}
-          className="absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2 text-xs uppercase tracking-[0.3em] text-text-muted transition-colors hover:text-white interactive-press"
-          initial={{ opacity: 0 }}
-          onClick={() => scrollTo("#about")}
-          transition={{ delay: 1.0 }}
-          type="button"
-        >
-          Scroll down
-          <ArrowDown className="h-4 w-4 animate-bounceSoft text-accent-cyan" />
-        </motion.button>
       </div>
     </section>
   );

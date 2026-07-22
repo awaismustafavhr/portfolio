@@ -12,8 +12,8 @@ export type EducationItem = {
 
 export const education: EducationItem[] = [
   {
-    institution: "Comsats University Islamabad",
-    initials: "NU",
+    institution: "COMSATS University Islamabad, Vehari Campus",
+    initials: "CUI",
     level: "Bachelor's",
     degree: "BS Software Engineering",
     field: "Software Engineering & Human Computer Interaction",
@@ -25,20 +25,5 @@ export const education: EducationItem[] = [
       "Contributed to collaborative labs with peer-reviewed design critiques.",
     ],
     skills: ["Algorithms", "Databases", "UX Research", "Systems Design"],
-  },
-  {
-    institution: "Design Academy",
-    initials: "DA",
-    level: "Diploma",
-    degree: "Product Design & Visual Communication",
-    field: "Interface Systems and Digital Prototyping",
-    range: "2020 - 2021",
-    grade: "Distinction",
-    highlights: [
-      "Developed polished visual systems, brand directions, and reusable UI libraries.",
-      "Explored typography, interaction design, and user-flow testing.",
-      "Produced case-study-ready capstones combining interface and motion design.",
-    ],
-    skills: ["Figma", "Wireframing", "Visual Design", "Motion"],
   },
 ];

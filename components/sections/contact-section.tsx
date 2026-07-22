@@ -1,12 +1,13 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useRef, useState } from "react";
 import { ArrowRight, Loader2, Send } from "lucide-react";
 import { SectionHeading } from "./section-heading";
 import { contactDetails } from "@/data/site";
 import { cn } from "@/lib/utils";
 
 export function ContactSection() {
+  const formRef = useRef<HTMLFormElement>(null);
   const [contactState, setContactState] = useState<{
     loading: boolean;
     message: string;
@@ -15,7 +16,8 @@ export function ContactSection() {
 
   const handleContactSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
+    if (!formRef.current) return;
+    const formData = new FormData(formRef.current);
 
     setContactState({ loading: true, message: "", success: false });
 
@@ -39,7 +41,7 @@ export function ContactSection() {
         throw new Error(result.message ?? "Unable to send your message right now.");
       }
 
-      event.currentTarget.reset();
+      formRef.current?.reset();
       setContactState({
         loading: false,
         message: result.message ?? "Message sent successfully.",
@@ -93,7 +95,11 @@ export function ContactSection() {
             ))}
           </div>
 
-          <form className="glass-panel p-8 border border-white/10 rounded-3xl" onSubmit={handleContactSubmit}>
+          <form
+            ref={formRef}
+            className="glass-panel p-8 border border-white/10 rounded-3xl"
+            onSubmit={handleContactSubmit}
+          >
             <div className="grid gap-5 md:grid-cols-2">
               <FormField label="Name" name="name" placeholder="Your name" />
               <FormField
