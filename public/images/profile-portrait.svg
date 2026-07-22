@@ -1,0 +1,13 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" width="720" height="720" viewBox="0 0 720 720" fill="none">
+  <rect width="720" height="720" rx="48" fill="#0f172a"/>
+  <circle cx="360" cy="250" r="120" fill="url(#grad)" fill-opacity="0.85"/>
+  <rect x="140" y="420" width="440" height="160" rx="36" fill="#111827" stroke="rgba(255,255,255,0.12)"/>
+  <text x="360" y="510" fill="#F8FAFC" font-size="42" font-family="Arial, sans-serif" text-anchor="middle">Your Portrait</text>
+  <defs>
+    <linearGradient id="grad" x1="220" y1="140" x2="500" y2="360" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7C3AED"/>
+      <stop offset="0.5" stop-color="#06B6D4"/>
+      <stop offset="1" stop-color="#EC4899"/>
+    </linearGradient>
+  </defs>
+</svg>
