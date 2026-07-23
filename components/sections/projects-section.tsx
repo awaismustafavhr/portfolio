@@ -95,6 +95,12 @@ function FeaturedProjectCard({
   onOpen: () => void;
   index: number;
 }) {
+  const hasLiveUrl =
+    project.liveUrl &&
+    project.liveUrl !== "#" &&
+    !project.liveUrl.includes("demo.com") &&
+    !project.liveUrl.includes("yourportfolio.com");
+
   return (
     <motion.article
       className="glass-panel glass-hover group overflow-hidden border border-white/10 rounded-3xl transition-all duration-500"
@@ -103,12 +109,13 @@ function FeaturedProjectCard({
       viewport={{ once: true }}
       whileInView={{ opacity: 1, y: 0 }}
     >
-      <button
-        className="grid w-full gap-0 text-left lg:grid-cols-[1.3fr_1fr] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan rounded-3xl"
-        onClick={onOpen}
-        type="button"
-      >
-        <div className="relative min-h-[340px] overflow-hidden bg-black/40">
+      <div className="grid w-full gap-0 text-left lg:grid-cols-[1.3fr_1fr]">
+        {/* Image — clicking anywhere on image navigates to project detail */}
+        <button
+          className="relative min-h-[340px] overflow-hidden bg-black/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan"
+          onClick={onOpen}
+          type="button"
+        >
           <Image
             alt={project.title}
             className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
@@ -117,38 +124,69 @@ function FeaturedProjectCard({
             width={1400}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent transition-opacity duration-500 group-hover:opacity-60" />
-        </div>
+        </button>
+
+        {/* Info panel */}
         <div className="relative flex flex-col justify-center p-8 md:p-12">
           <span className="absolute right-8 top-6 font-heading text-7xl font-bold text-white/10 pointer-events-none transition-colors duration-500 group-hover:text-accent-cyan/20">
             {String(project.id).padStart(2, "0")}
           </span>
-          <span className="glass-panel w-fit rounded-full px-4 py-2 text-xs uppercase tracking-[0.2em] text-gradient border border-white/10">
-            {project.category}
-          </span>
-          <h3 className="mt-6 font-heading text-3xl font-bold text-white transition-colors duration-300 group-hover:text-accent-cyan">
-            {project.title}
-          </h3>
-          <p className="mt-4 text-sm leading-7 text-text-secondary">{project.description}</p>
-          <div className="mt-6 flex flex-wrap gap-2">
-            {project.tags.map((tag) => (
-              <span
-                key={tag}
-                className="glass-panel rounded-full px-3 py-2 text-[11px] uppercase tracking-[0.18em] text-text-secondary border border-white/10"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
+          <button
+            className="text-left focus-visible:outline-none"
+            onClick={onOpen}
+            type="button"
+          >
+            <span className="glass-panel w-fit rounded-full px-4 py-2 text-xs uppercase tracking-[0.2em] text-gradient border border-white/10">
+              {project.category}
+            </span>
+            <h3 className="mt-6 font-heading text-3xl font-bold text-white transition-colors duration-300 group-hover:text-accent-cyan">
+              {project.title}
+            </h3>
+            <p className="mt-4 text-sm leading-7 text-text-secondary">{project.description}</p>
+            <div className="mt-6 flex flex-wrap gap-2">
+              {project.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="glass-panel rounded-full px-3 py-2 text-[11px] uppercase tracking-[0.18em] text-text-secondary border border-white/10"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </button>
+
           <div className="mt-8 flex flex-wrap gap-3">
-            <span className="accent-gradient inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm text-white font-medium shadow-md transition-transform duration-300 group-hover:scale-105">
-              Live Demo <ExternalLink className="h-4 w-4" />
-            </span>
-            <span className="glass-panel inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm text-white border border-white/10 transition-colors duration-300 group-hover:border-accent-purple/50">
+            {hasLiveUrl ? (
+              <a
+                href={project.liveUrl}
+                rel="noreferrer noopener"
+                target="_blank"
+                className="accent-gradient inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm text-white font-medium shadow-md transition-transform duration-300 hover:scale-105"
+                onClick={(e) => e.stopPropagation()}
+              >
+                Live Project <ExternalLink className="h-4 w-4" />
+              </a>
+            ) : (
+              <button
+                type="button"
+                onClick={onOpen}
+                className="accent-gradient inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm text-white font-medium shadow-md transition-transform duration-300 hover:scale-105"
+              >
+                Live Demo <ExternalLink className="h-4 w-4" />
+              </button>
+            )}
+            <a
+              href={project.githubUrl}
+              rel="noreferrer noopener"
+              target="_blank"
+              className="glass-panel inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm text-white border border-white/10 transition-colors duration-300 hover:border-accent-purple/50"
+              onClick={(e) => e.stopPropagation()}
+            >
               Source Code <Github className="h-4 w-4" />
-            </span>
+            </a>
           </div>
         </div>
-      </button>
+      </div>
     </motion.article>
   );
 }
