@@ -18,26 +18,33 @@ export function Header({ activeSection }: HeaderProps) {
   const { scrollTo, lenis } = useSmoothScroll();
 
   useEffect(() => {
+    let isCurrentlySolid = window.scrollY > 50;
+    setNavbarSolid(isCurrentlySolid);
+
     if (lenis) {
       const updateNavbar = () => {
-        setNavbarSolid(lenis.scroll > 50);
+        const nextSolid = lenis.scroll > 50;
+        if (nextSolid !== isCurrentlySolid) {
+          isCurrentlySolid = nextSolid;
+          setNavbarSolid(nextSolid);
+        }
       };
 
-      updateNavbar();
       const unsubscribe = lenis.on("scroll", updateNavbar);
-
       return () => {
         unsubscribe();
       };
     }
 
     const handleScroll = () => {
-      setNavbarSolid(window.scrollY > 50);
+      const nextSolid = window.scrollY > 50;
+      if (nextSolid !== isCurrentlySolid) {
+        isCurrentlySolid = nextSolid;
+        setNavbarSolid(nextSolid);
+      }
     };
 
-    handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
-
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lenis]);
 
@@ -65,9 +72,9 @@ export function Header({ activeSection }: HeaderProps) {
       <motion.header
         animate={{ opacity: 1, y: 0 }}
         className={cn(
-          "fixed inset-x-0 top-0 z-[100] transition-all duration-300",
+          "fixed inset-x-0 top-0 z-[100] transition-all duration-300 transform-gpu",
           navbarSolid
-            ? "border-b border-white/10 bg-black/50 backdrop-blur-2xl shadow-lg"
+            ? "border-b border-white/10 bg-black/60 backdrop-blur-xl shadow-lg"
             : "bg-transparent",
         )}
         initial={{ opacity: 0, y: -100 }}

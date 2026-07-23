@@ -21,6 +21,10 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: auto !important;
+}
+
 html,
 body {
   margin: 0;
@@ -37,6 +41,7 @@ body {
   color: var(--text-primary);
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 a {
@@ -82,9 +87,10 @@ textarea {
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(14px) saturate(150%);
-    -webkit-backdrop-filter: blur(14px) saturate(150%);
+    backdrop-filter: blur(12px) saturate(140%);
+    -webkit-backdrop-filter: blur(12px) saturate(140%);
     border-radius: 16px;
+    transform: translateZ(0);
   }
 
   .glass-hover {
@@ -92,13 +98,13 @@ textarea {
                 border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
                 transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
                 box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    will-change: transform, box-shadow;
   }
 
   .glass-hover:hover {
     background: var(--glass-hover);
     border-color: rgba(255, 255, 255, 0.22);
     box-shadow: 0 14px 40px rgba(0, 0, 0, 0.5), 0 0 24px rgba(124, 58, 237, 0.22);
+    will-change: transform;
   }
 
   .accent-gradient {
@@ -120,15 +126,15 @@ textarea {
   .section-shell {
     position: relative;
     overflow: clip;
+    transform: translateZ(0);
   }
 
   .section-orb {
     position: absolute;
     border-radius: 999px;
-    filter: blur(90px);
+    filter: blur(80px);
     pointer-events: none;
     z-index: 0;
-    will-change: transform, opacity;
     transform: translate3d(0, 0, 0);
     animation: orb-float 12s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   }
@@ -149,7 +155,7 @@ textarea {
   }
 }
 
-/* Lenis smooth scrolling compatibility */
+/* Lenis smooth scrolling compatibility rules */
 html.lenis,
 html.lenis body {
   height: auto;
@@ -173,18 +179,18 @@ html.lenis body {
 
 @media (max-width: 768px), (pointer: coarse) {
   .glass-panel {
-    backdrop-filter: blur(10px) saturate(135%);
-    -webkit-backdrop-filter: blur(10px) saturate(135%);
+    backdrop-filter: blur(8px) saturate(125%);
+    -webkit-backdrop-filter: blur(8px) saturate(125%);
   }
 
   .section-orb {
-    filter: blur(70px);
+    filter: blur(60px);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   html {
-    scroll-behavior: auto;
+    scroll-behavior: auto !important;
   }
 
   .section-orb,
@@ -194,4 +200,3 @@ html.lenis body {
     transition-duration: 0.01ms !important;
   }
 }
-

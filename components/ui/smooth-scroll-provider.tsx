@@ -25,6 +25,7 @@ export const useSmoothScroll = () => useContext(SmoothScrollContext);
 
 export function SmoothScrollProvider({ children }: { children: React.ReactNode }) {
   const [lenis, setLenis] = useState<Lenis | null>(null);
+  const lenisRef = useRef<Lenis | null>(null);
   const prefersReducedMotionRef = useRef(false);
 
   useEffect(() => {
@@ -41,26 +42,28 @@ export function SmoothScrollProvider({ children }: { children: React.ReactNode }
       return () => mediaQuery.removeEventListener("change", handleMotionPreference);
     }
 
+    // High-performance Lenis smooth scroll setup
+    // Optimized easing and duration for 60/120Hz displays
+    // Native touch scrolling enabled for zero-lag mobile experience
     const lenisInstance = new Lenis({
       autoRaf: true,
-      duration: 1.2,
+      duration: 1.1,
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: "vertical",
       gestureOrientation: "vertical",
-      lerp: 0.08,
       smoothWheel: true,
-      syncTouch: true,
-      syncTouchLerp: 0.08,
-      touchMultiplier: 1.5,
-      wheelMultiplier: 1,
-      overscroll: true,
+      wheelMultiplier: 1.0,
+      touchMultiplier: 1.8,
+      infinite: false,
       autoResize: true,
     });
 
+    lenisRef.current = lenisInstance;
     setLenis(lenisInstance);
 
     return () => {
       lenisInstance.destroy();
+      lenisRef.current = null;
       setLenis(null);
       mediaQuery.removeEventListener("change", handleMotionPreference);
     };
@@ -76,9 +79,10 @@ export function SmoothScrollProvider({ children }: { children: React.ReactNode }
         immediate?: boolean;
       },
     ) => {
-      if (lenis) {
-        lenis.scrollTo(target, {
-          duration: 1,
+      const activeLenis = lenisRef.current || lenis;
+      if (activeLenis) {
+        activeLenis.scrollTo(target, {
+          duration: 1.0,
           ...options,
           immediate: prefersReducedMotionRef.current || options?.immediate,
         });
