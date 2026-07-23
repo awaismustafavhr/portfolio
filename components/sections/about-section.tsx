@@ -45,9 +45,10 @@ export function AboutSection() {
               <div className="absolute inset-0 rounded-[28px] border border-transparent bg-gradient-to-br from-white/10 via-transparent to-white/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
               <Image
                 alt="Awais Mustafa Portrait"
-                className="aspect-square w-full rounded-[28px] object-cover"
+                className="aspect-square w-full rounded-[28px] object-cover transition-transform duration-500 group-hover:scale-[1.02]"
                 height={720}
-                src="/images/profile-portrait.svg"
+                priority
+                src="/images/profile-portrait.jpg"
                 width={720}
               />
             </div>
