@@ -87,20 +87,20 @@ function SkillCard({
 }) {
   return (
     <motion.div
-      className="glass-panel glass-hover p-6 border border-white/10"
+      className="glass-panel glass-hover group rounded-2xl p-5 border border-white/10 transition-all duration-300 hover:border-accent-cyan/20"
       initial={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.35, delay: index * 0.05 }}
       viewport={{ once: true }}
       whileInView={{ opacity: 1, scale: 1 }}
     >
       <div className="flex items-center gap-4">
-        <div className="accent-gradient flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-white shadow-md">
+        <div className="accent-gradient flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-sm font-semibold text-white shadow-md">
           {skill.icon}
         </div>
         <div className="flex-1">
           <div className="flex items-center justify-between gap-4">
             <p className="font-medium text-white">{skill.name}</p>
-            <span className="text-sm font-medium text-gradient">{skill.level}%</span>
+            <span className="text-sm font-semibold text-gradient">{skill.level}%</span>
           </div>
           <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/10">
             <motion.div
@@ -124,13 +124,13 @@ function MarqueeRow({ items, reverse }: { items: string[]; reverse: boolean }) {
     <div className="overflow-hidden">
       <div className={cn("flex min-w-max", reverse ? "animate-marqueeRight" : "animate-marqueeLeft")}>
         {duplicated.map((item, index) => (
-          <div
-            key={`${item}-${index}`}
-            className="glass-panel mx-2 flex h-10 items-center gap-3 rounded-full px-4 text-sm text-white border border-white/10 hover:border-white/20 transition-colors"
-          >
-            <span className="text-gradient font-bold">{item.slice(0, 2).toUpperCase()}</span>
-            <span>{item}</span>
-          </div>
+      <div
+        key={`${item}-${index}`}
+        className="glass-panel mx-2 flex h-10 items-center gap-3 rounded-full px-4 text-sm text-white border border-white/10 hover:border-accent-cyan/30 hover:text-accent-cyan transition-all duration-200"
+      >
+        <span className="text-gradient font-bold">{item.slice(0, 2).toUpperCase()}</span>
+        <span className="font-medium">{item}</span>
+      </div>
         ))}
       </div>
     </div>
