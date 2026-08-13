@@ -4,6 +4,8 @@ export const navLinks = [
   { label: "Skills", href: "#skills", id: "skills" },
   { label: "Projects", href: "#projects", id: "projects" },
   { label: "Experience", href: "#experience", id: "experience" },
+  { label: "Education", href: "#education", id: "education" },
+  { label: "Testimonials", href: "#testimonials", id: "testimonials" },
   { label: "Contact", href: "#contact", id: "contact" },
 ] as const;
 
