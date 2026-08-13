@@ -43,16 +43,16 @@ export function SmoothScrollProvider({ children }: { children: React.ReactNode }
     }
 
     // High-performance Lenis smooth scroll setup
-    // Optimized easing and duration for 60/120Hz displays
-    // Native touch scrolling enabled for zero-lag mobile experience
+    // duration 0.85 keeps it smooth without feeling slow
+    // wheelMultiplier 1.1 = near-native scroll speed on fast wheels
     const lenisInstance = new Lenis({
       autoRaf: true,
-      duration: 1.0,
+      duration: 0.85,
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: "vertical",
       gestureOrientation: "vertical",
       smoothWheel: true,
-      wheelMultiplier: 1.0,
+      wheelMultiplier: 1.1,
       touchMultiplier: 2.0,
       infinite: false,
       autoResize: true,
@@ -82,7 +82,7 @@ export function SmoothScrollProvider({ children }: { children: React.ReactNode }
       const activeLenis = lenisRef.current || lenis;
       if (activeLenis) {
         activeLenis.scrollTo(target, {
-          duration: 1.0,
+          duration: 0.85,
           ...options,
           immediate: prefersReducedMotionRef.current || options?.immediate,
         });

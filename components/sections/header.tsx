@@ -119,7 +119,7 @@ export function Header({ activeSection, onNavClick }: HeaderProps) {
                 AM
               </div>
             </div>
-            <span className="hidden font-heading text-[15px] font-semibold tracking-tight text-white/90 transition-colors duration-300 group-hover:text-white sm:inline-block md:hidden lg:inline-block">
+            <span className="hidden font-heading text-[15px] font-semibold tracking-tight text-white/90 transition-colors duration-300 group-hover:text-white sm:inline-block">
               Awais
               <span className="text-gradient">.dev</span>
             </span>
@@ -127,7 +127,7 @@ export function Header({ activeSection, onNavClick }: HeaderProps) {
 
           {/* Desktop nav (centered floating pill) */}
           <nav className="hidden flex-1 items-center justify-center md:flex">
-            <div className="glass-panel inline-flex items-center gap-1 rounded-full border-white/[0.09] bg-white/[0.02] p-1.5 backdrop-blur-xl shadow-[0_8px_32px_-16px_rgba(0,0,0,0.5)]">
+            <div className="glass-panel inline-flex items-center gap-0.5 rounded-full border border-white/[0.1] bg-white/[0.03] p-1 backdrop-blur-xl shadow-[0_4px_24px_-8px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.06)]">
               {navLinks.map((link) => {
                 const isActive = activeSection === link.id;
 
@@ -135,19 +135,22 @@ export function Header({ activeSection, onNavClick }: HeaderProps) {
                   <button
                     key={link.id}
                     className={cn(
-                      "relative rounded-full px-4 py-2 text-[13px] font-medium transition-colors duration-300 focus-ring",
+                      "relative rounded-full px-[14px] py-[7px] text-[13px] font-medium transition-colors duration-200 focus-ring",
                       isActive
                         ? "text-white"
-                        : "text-text-secondary hover:text-white hover:bg-white/[0.04]",
+                        : "text-text-secondary hover:text-white hover:bg-white/[0.05]",
                     )}
                     onClick={() => handleNavClick(link.id)}
                     type="button"
                   >
                     {isActive && (
                       <motion.span
-                        className="absolute inset-0 -z-0 rounded-full accent-gradient opacity-95 shadow-[0_2px_12px_-4px_rgba(124,58,237,0.5)]"
+                        className="absolute inset-0 -z-0 rounded-full shadow-[0_2px_16px_-4px_rgba(6,182,212,0.55)]"
                         layoutId="nav-active-pill"
-                        transition={{ type: "spring", stiffness: 450, damping: 35 }}
+                        style={{
+                          background: "linear-gradient(135deg, #06b6d4 0%, #7c3aed 50%, #3b82f6 100%)",
+                        }}
+                        transition={{ type: "spring", stiffness: 500, damping: 38 }}
                       />
                     )}
                     <span className="relative z-10">{link.label}</span>
