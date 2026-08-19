@@ -24,7 +24,7 @@ import { useCounter } from "@/hooks/useCounter";
 import { cn } from "@/lib/utils";
 
 /* ─── Resume filename — must match /public exactly ───────────────────── */
-const RESUME_FILE = "Awais Mustafa Resume.pdf";
+const RESUME_FILE = "awais-mustafa-resume.pdf";
 
 /* ─── Framer Motion variants ──────────────────────────────────────────── */
 const fadeLeft = {
