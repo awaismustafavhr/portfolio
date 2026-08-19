@@ -400,3 +400,8 @@ html.lenis body {
     display: none;
   }
 }
+
+/* Social icon: muted by default, brand color on hover */
+.group\/soc:hover .social-icon-wrap {
+  color: var(--brand-color) !important;
+}

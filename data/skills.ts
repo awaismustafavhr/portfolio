@@ -35,7 +35,7 @@ export const skills: Skill[] = [
     description: "Component architecture, Custom Hooks, State Management & Fiber reconciliation.",
   },
   {
-    name: "Next.js 14",
+    name: "Next.js",
     level: 85,
     proficiency: "Expert",
     icon: "Zap",
@@ -44,7 +44,7 @@ export const skills: Skill[] = [
   },
   {
     name: "TypeScript",
-    level: 82,
+    level: 80,
     proficiency: "Advanced",
     icon: "FileCode",
     category: "Frontend",
@@ -59,12 +59,12 @@ export const skills: Skill[] = [
     description: "Utility-first design systems, Responsive layouts & Glassmorphism themes.",
   },
   {
-    name: "Framer Motion",
-    level: 78,
-    proficiency: "Advanced",
+    name: "Angular",
+    level: 72,
+    proficiency: "Proficient",
     icon: "Sparkles",
     category: "Frontend",
-    description: "Fluid micro-interactions, Keyframe animations & Scroll-driven transitions.",
+    description: "Component-based architecture, Services, RxJS & reactive forms.",
   },
   {
     name: "HTML5 / CSS3",
@@ -78,7 +78,7 @@ export const skills: Skill[] = [
   // Backend
   {
     name: "Node.js",
-    level: 80,
+    level: 82,
     proficiency: "Advanced",
     icon: "Server",
     category: "Backend",
@@ -111,6 +111,14 @@ export const skills: Skill[] = [
 
   // Tools & DevOps
   {
+    name: "Flutter",
+    level: 75,
+    proficiency: "Advanced",
+    icon: "Smartphone",
+    category: "Tools & DevOps",
+    description: "Cross-platform mobile apps for Android & iOS with Dart and Supabase integration.",
+  },
+  {
     name: "Git & GitHub",
     level: 85,
     proficiency: "Expert",
@@ -119,20 +127,12 @@ export const skills: Skill[] = [
     description: "Version control workflows, Feature branching, Pull requests & Merge strategies.",
   },
   {
-    name: "Vercel & Deployment",
-    level: 80,
+    name: "Supabase",
+    level: 74,
     proficiency: "Advanced",
     icon: "Cloud",
     category: "Tools & DevOps",
-    description: "CI/CD pipelines, Edge Functions, Environment vars & Production builds.",
-  },
-  {
-    name: "VS Code",
-    level: 90,
-    proficiency: "Expert",
-    icon: "Terminal",
-    category: "Tools & DevOps",
-    description: "Custom keybindings, Linter configurations, Debugging & Extensions.",
+    description: "Real-time database, Auth, Row-level security & Edge Functions.",
   },
   {
     name: "Postman",
@@ -156,7 +156,7 @@ export const skills: Skill[] = [
     name: "Responsive Web Design",
     level: 92,
     proficiency: "Expert",
-    icon: "Smartphone",
+    icon: "Monitor",
     category: "Design",
     description: "Mobile-first layouts, Fluid typography & Cross-browser consistency.",
   },
@@ -164,15 +164,15 @@ export const skills: Skill[] = [
 
 export const marqueeTechnologies = [
   "React.js",
-  "Next.js 14",
+  "Next.js",
   "TypeScript",
   "Node.js",
   "Tailwind CSS",
   "MongoDB",
   "Express.js",
-  "Framer Motion",
+  "Angular",
+  "Flutter",
+  "Supabase",
   "Git & GitHub",
-  "Vercel",
   "REST APIs",
-  "UI/UX Design",
 ];

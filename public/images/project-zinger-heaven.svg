@@ -1,0 +1,237 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" width="1200" height="750">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0c0500"/>
+      <stop offset="50%" style="stop-color:#130800"/>
+      <stop offset="100%" style="stop-color:#0a0300"/>
+    </linearGradient>
+    <linearGradient id="fire" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#dc2626"/>
+      <stop offset="40%" style="stop-color:#f97316"/>
+      <stop offset="100%" style="stop-color:#fbbf24"/>
+    </linearGradient>
+    <linearGradient id="fireBtn" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#f97316"/>
+      <stop offset="100%" style="stop-color:#ef4444"/>
+    </linearGradient>
+    <linearGradient id="cardGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1c0e00"/>
+      <stop offset="100%" style="stop-color:#110600"/>
+    </linearGradient>
+    <linearGradient id="cardGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a0a00"/>
+      <stop offset="100%" style="stop-color:#0f0400"/>
+    </linearGradient>
+    <radialGradient id="heroGlow" cx="50%" cy="60%" r="55%">
+      <stop offset="0%" style="stop-color:#f97316;stop-opacity:0.22"/>
+      <stop offset="60%" style="stop-color:#dc2626;stop-opacity:0.08"/>
+      <stop offset="100%" style="stop-color:transparent;stop-opacity:0"/>
+    </radialGradient>
+    <radialGradient id="plateGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:0.35"/>
+      <stop offset="100%" style="stop-color:transparent;stop-opacity:0"/>
+    </radialGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="12" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="cardShadow">
+      <feDropShadow dx="0" dy="8" stdDeviation="16" flood-color="rgba(0,0,0,0.7)"/>
+    </filter>
+  </defs>
+
+  <!-- Deep dark background -->
+  <rect width="1200" height="750" fill="url(#bg)"/>
+  <rect width="1200" height="750" fill="url(#heroGlow)"/>
+
+  <!-- Subtle noise texture lines -->
+  <g opacity="0.03" stroke="#ffffff" stroke-width="0.5">
+    <line x1="0" y1="75" x2="1200" y2="75"/><line x1="0" y1="150" x2="1200" y2="150"/>
+    <line x1="0" y1="225" x2="1200" y2="225"/><line x1="0" y1="300" x2="1200" y2="300"/>
+    <line x1="0" y1="375" x2="1200" y2="375"/><line x1="0" y1="450" x2="1200" y2="450"/>
+    <line x1="0" y1="525" x2="1200" y2="525"/><line x1="0" y1="600" x2="1200" y2="600"/>
+    <line x1="0" y1="675" x2="1200" y2="675"/>
+    <line x1="120" y1="0" x2="120" y2="750"/><line x1="240" y1="0" x2="240" y2="750"/>
+    <line x1="360" y1="0" x2="360" y2="750"/><line x1="480" y1="0" x2="480" y2="750"/>
+    <line x1="600" y1="0" x2="600" y2="750"/><line x1="720" y1="0" x2="720" y2="750"/>
+    <line x1="840" y1="0" x2="840" y2="750"/><line x1="960" y1="0" x2="960" y2="750"/>
+    <line x1="1080" y1="0" x2="1080" y2="750"/>
+  </g>
+
+  <!-- Premium Navbar -->
+  <rect x="0" y="0" width="1200" height="68" fill="rgba(0,0,0,0.75)"/>
+  <rect x="0" y="67" width="1200" height="1" fill="rgba(249,115,22,0.3)"/>
+  <!-- Logo Z mark -->
+  <rect x="28" y="14" width="40" height="40" rx="12" fill="url(#fire)"/>
+  <text x="35" y="43" font-family="Georgia, serif" font-size="22" font-weight="900" fill="white">Z</text>
+  <!-- Brand name -->
+  <text x="76" y="37" font-family="Georgia, serif" font-size="17" font-weight="900" fill="white">ZINGER</text>
+  <text x="76" y="54" font-family="Arial" font-size="9" font-weight="700" fill="#f97316" letter-spacing="4">HEAVEN</text>
+  <!-- Nav links -->
+  <text x="360" y="40" font-family="Arial" font-size="12" fill="rgba(255,255,255,0.6)" text-anchor="middle">Menu</text>
+  <text x="460" y="40" font-family="Arial" font-size="12" fill="rgba(255,255,255,0.6)" text-anchor="middle">Deals</text>
+  <text x="560" y="40" font-family="Arial" font-size="12" fill="rgba(255,255,255,0.6)" text-anchor="middle">Track Order</text>
+  <text x="660" y="40" font-family="Arial" font-size="12" fill="rgba(255,255,255,0.6)" text-anchor="middle">About</text>
+  <!-- Active indicator -->
+  <rect x="340" y="62" width="40" height="3" rx="2" fill="url(#fire)"/>
+  <!-- Order CTA -->
+  <rect x="1010" y="16" width="162" height="36" rx="18" fill="url(#fireBtn)"/>
+  <rect x="1010" y="16" width="162" height="36" rx="18" fill="none" stroke="rgba(255,200,100,0.3)" stroke-width="1"/>
+  <text x="1091" y="39" font-family="Arial" font-size="12" font-weight="700" fill="white" text-anchor="middle">Order Online →</text>
+
+  <!-- HERO SPLIT LAYOUT -->
+  <!-- Left: Text Content -->
+  <text x="52" y="140" font-family="Arial" font-size="10" font-weight="800" fill="#f97316" letter-spacing="5">PREMIUM FAST FOOD</text>
+
+  <!-- Headline -->
+  <text x="52" y="195" font-family="Georgia, serif" font-size="44" font-weight="900" fill="white">Taste the</text>
+  <text x="52" y="248" font-family="Georgia, serif" font-size="44" font-weight="900" fill="url(#fire)">Real Flame.</text>
+  <text x="52" y="301" font-family="Georgia, serif" font-size="44" font-weight="900" fill="white">Feel the</text>
+  <text x="52" y="354" font-family="Georgia, serif" font-size="44" font-weight="900" fill="white">Sizzle.</text>
+
+  <text x="52" y="392" font-family="Arial" font-size="13" fill="rgba(203,213,225,0.7)" text-anchor="left">Crispy zinger burgers, loaded deals &amp; fresh combos</text>
+  <text x="52" y="412" font-family="Arial" font-size="13" fill="rgba(203,213,225,0.7)">delivered hot to your doorstep.</text>
+
+  <!-- CTA Buttons -->
+  <rect x="52" y="438" width="172" height="46" rx="23" fill="url(#fireBtn)" filter="url(#glow)"/>
+  <text x="138" y="467" font-family="Arial" font-size="13" font-weight="700" fill="white" text-anchor="middle">Order Now 🔥</text>
+
+  <rect x="238" y="438" width="152" height="46" rx="23" fill="rgba(255,255,255,0.06)" stroke="rgba(249,115,22,0.4)" stroke-width="1.5"/>
+  <text x="314" y="467" font-family="Arial" font-size="13" fill="rgba(255,255,255,0.85)" text-anchor="middle">Browse Menu</text>
+
+  <!-- Delivery badges row -->
+  <rect x="52" y="506" width="110" height="36" rx="10" fill="rgba(249,115,22,0.1)" stroke="rgba(249,115,22,0.2)" stroke-width="1"/>
+  <text x="107" y="519" font-family="Arial" font-size="14" text-anchor="middle">🛵</text>
+  <text x="107" y="534" font-family="Arial" font-size="8" fill="rgba(249,115,22,0.9)" text-anchor="middle" font-weight="700">FREE DELIVERY</text>
+
+  <rect x="172" y="506" width="110" height="36" rx="10" fill="rgba(249,115,22,0.1)" stroke="rgba(249,115,22,0.2)" stroke-width="1"/>
+  <text x="227" y="519" font-family="Arial" font-size="14" text-anchor="middle">⏱</text>
+  <text x="227" y="534" font-family="Arial" font-size="8" fill="rgba(249,115,22,0.9)" text-anchor="middle" font-weight="700">30 MIN AVG</text>
+
+  <rect x="292" y="506" width="110" height="36" rx="10" fill="rgba(249,115,22,0.1)" stroke="rgba(249,115,22,0.2)" stroke-width="1"/>
+  <text x="347" y="519" font-family="Arial" font-size="14" text-anchor="middle">⭐</text>
+  <text x="347" y="534" font-family="Arial" font-size="8" fill="rgba(249,115,22,0.9)" text-anchor="middle" font-weight="700">4.8 RATING</text>
+
+  <!-- Right: Hero Visual — Premium Burger Plate illustration -->
+  <circle cx="870" cy="350" r="240" fill="rgba(249,115,22,0.06)"/>
+  <circle cx="870" cy="350" r="180" fill="rgba(220,38,38,0.07)"/>
+  <circle cx="870" cy="370" r="130" fill="url(#plateGlow)" filter="url(#softGlow)"/>
+
+  <!-- Decorative ring -->
+  <circle cx="870" cy="350" r="220" fill="none" stroke="rgba(249,115,22,0.08)" stroke-width="1" stroke-dasharray="8,6"/>
+  <circle cx="870" cy="350" r="190" fill="none" stroke="rgba(220,38,38,0.06)" stroke-width="1" stroke-dasharray="4,8"/>
+
+  <!-- Burger Illustration (SVG-art style) -->
+  <!-- Sesame seed bun top -->
+  <ellipse cx="870" cy="245" rx="110" ry="55" fill="#c2410c"/>
+  <ellipse cx="870" cy="220" rx="108" ry="52" fill="#ea580c"/>
+  <ellipse cx="870" cy="215" rx="105" ry="48" fill="#fb923c"/>
+  <ellipse cx="870" cy="208" rx="100" ry="42" fill="#fdba74"/>
+  <!-- Sesame seeds -->
+  <ellipse cx="840" cy="196" rx="7" ry="4" fill="#fef3c7" opacity="0.8"/>
+  <ellipse cx="870" cy="192" rx="7" ry="4" fill="#fef3c7" opacity="0.8"/>
+  <ellipse cx="900" cy="196" rx="7" ry="4" fill="#fef3c7" opacity="0.8"/>
+  <ellipse cx="855" cy="206" rx="6" ry="3.5" fill="#fef3c7" opacity="0.7"/>
+  <ellipse cx="885" cy="206" rx="6" ry="3.5" fill="#fef3c7" opacity="0.7"/>
+
+  <!-- Lettuce peek -->
+  <path d="M760 265 Q790 255 820 262 Q850 269 870 264 Q890 259 920 262 Q950 265 980 260 Q970 278 940 282 Q910 286 870 283 Q830 280 800 284 Q770 288 760 278 Z" fill="#15803d"/>
+  <path d="M762 266 Q792 274 820 270 Q850 266 870 272 Q890 278 920 270 Q950 262 978 262 Q975 272 942 280 Q910 288 870 284 Q830 280 800 284 Q768 288 762 278 Z" fill="#16a34a"/>
+
+  <!-- Tomato slice -->
+  <ellipse cx="870" cy="282" rx="100" ry="14" fill="#dc2626"/>
+  <ellipse cx="870" cy="282" rx="90" ry="11" fill="#ef4444"/>
+  <!-- Tomato seeds detail -->
+  <ellipse cx="840" cy="282" rx="8" ry="5" fill="#fca5a5" opacity="0.5"/>
+  <ellipse cx="870" cy="281" rx="8" ry="5" fill="#fca5a5" opacity="0.5"/>
+  <ellipse cx="900" cy="282" rx="8" ry="5" fill="#fca5a5" opacity="0.5"/>
+
+  <!-- Cheese slice -->
+  <path d="M758 294 L982 294 L990 308 L750 308 Z" fill="#fbbf24"/>
+  <path d="M758 294 L982 294 L982 298 L758 298 Z" fill="#fde68a"/>
+
+  <!-- Crispy chicken patty -->
+  <ellipse cx="870" cy="318" rx="108" ry="22" fill="#92400e"/>
+  <ellipse cx="870" cy="314" rx="105" ry="20" fill="#a16207"/>
+  <ellipse cx="870" cy="310" rx="102" ry="18" fill="#ca8a04"/>
+  <!-- Crispy texture marks -->
+  <g stroke="#92400e" stroke-width="1.5" opacity="0.6">
+    <line x1="790" y1="305" x2="796" y2="316"/>
+    <line x1="820" y1="302" x2="826" y2="316"/>
+    <line x1="850" y1="301" x2="854" y2="316"/>
+    <line x1="880" y1="301" x2="884" y2="316"/>
+    <line x1="910" y1="302" x2="914" y2="316"/>
+    <line x1="940" y1="305" x2="944" y2="316"/>
+  </g>
+
+  <!-- Bottom bun -->
+  <ellipse cx="870" cy="338" rx="112" ry="18" fill="#c2410c"/>
+  <ellipse cx="870" cy="345" rx="115" ry="14" fill="#9a3412"/>
+  <ellipse cx="870" cy="352" rx="118" ry="10" fill="#7c2d12"/>
+
+  <!-- Plate/shadow -->
+  <ellipse cx="870" cy="368" rx="148" ry="16" fill="rgba(0,0,0,0.5)"/>
+  <ellipse cx="870" cy="365" rx="150" ry="12" fill="rgba(120,50,0,0.2)"/>
+
+  <!-- Floating sauce drops -->
+  <circle cx="1020" cy="200" r="8" fill="#ef4444" opacity="0.7" filter="url(#glow)"/>
+  <circle cx="730" cy="300" r="6" fill="#f97316" opacity="0.6" filter="url(#glow)"/>
+  <circle cx="1050" cy="320" r="5" fill="#fbbf24" opacity="0.5"/>
+
+  <!-- Sparkle stars around burger -->
+  <text x="1050" y="185" font-size="18" opacity="0.8">✦</text>
+  <text x="700" y="165" font-size="14" opacity="0.6">✦</text>
+  <text x="1080" y="400" font-size="12" opacity="0.5">✦</text>
+
+  <!-- MENU CARDS ROW — Bottom -->
+  <rect x="30" y="596" width="1140" height="130" rx="20" fill="rgba(20,10,0,0.85)" stroke="rgba(249,115,22,0.15)" stroke-width="1"/>
+  <rect x="30" y="596" width="1140" height="4" rx="2" fill="url(#fire)" opacity="0.7"/>
+
+  <!-- Card 1 -->
+  <rect x="50" y="614" width="245" height="94" rx="14" fill="url(#cardGrad1)" stroke="rgba(249,115,22,0.2)" stroke-width="1"/>
+  <text x="72" y="642" font-size="24">🍔</text>
+  <text x="106" y="637" font-family="Arial" font-size="12" font-weight="700" fill="white">Zinger Burger</text>
+  <text x="106" y="653" font-family="Arial" font-size="10" fill="rgba(203,213,225,0.6)">Crispy fillet, lettuce, sauce</text>
+  <text x="72" y="678" font-family="Arial" font-size="13" font-weight="800" fill="#f97316">Rs. 450</text>
+  <rect x="220" y="668" width="60" height="24" rx="12" fill="url(#fireBtn)"/>
+  <text x="250" y="684" font-family="Arial" font-size="10" font-weight="700" fill="white" text-anchor="middle">Add +</text>
+
+  <!-- Card 2 -->
+  <rect x="308" y="614" width="245" height="94" rx="14" fill="url(#cardGrad2)" stroke="rgba(239,68,68,0.25)" stroke-width="1"/>
+  <text x="330" y="642" font-size="24">🍟</text>
+  <text x="364" y="637" font-family="Arial" font-size="12" font-weight="700" fill="white">Family Deal</text>
+  <text x="364" y="653" font-family="Arial" font-size="10" fill="rgba(203,213,225,0.6)">4 pcs + Fries + 2 Drinks</text>
+  <rect x="330" y="658" width="48" height="16" rx="8" fill="rgba(239,68,68,0.25)"/>
+  <text x="354" y="670" font-family="Arial" font-size="8" font-weight="700" fill="#ef4444" text-anchor="middle">BESTSELLER</text>
+  <text x="330" y="693" font-family="Arial" font-size="13" font-weight="800" fill="#ef4444">Rs. 1,200</text>
+  <rect x="478" y="668" width="60" height="24" rx="12" fill="rgba(239,68,68,0.8)"/>
+  <text x="508" y="684" font-family="Arial" font-size="10" font-weight="700" fill="white" text-anchor="middle">Add +</text>
+
+  <!-- Card 3 -->
+  <rect x="566" y="614" width="245" height="94" rx="14" fill="url(#cardGrad1)" stroke="rgba(245,158,11,0.2)" stroke-width="1"/>
+  <text x="588" y="642" font-size="24">🌯</text>
+  <text x="622" y="637" font-family="Arial" font-size="12" font-weight="700" fill="white">Zinger Wrap</text>
+  <text x="622" y="653" font-family="Arial" font-size="10" fill="rgba(203,213,225,0.6)">With garlic chilli sauce</text>
+  <text x="588" y="678" font-family="Arial" font-size="13" font-weight="800" fill="#f59e0b">Rs. 380</text>
+  <rect x="736" y="668" width="60" height="24" rx="12" fill="rgba(245,158,11,0.75)"/>
+  <text x="766" y="684" font-family="Arial" font-size="10" font-weight="700" fill="white" text-anchor="middle">Add +</text>
+
+  <!-- Card 4 -->
+  <rect x="824" y="614" width="245" height="94" rx="14" fill="url(#cardGrad2)" stroke="rgba(52,211,153,0.2)" stroke-width="1"/>
+  <text x="846" y="642" font-size="24">🥤</text>
+  <text x="880" y="637" font-family="Arial" font-size="12" font-weight="700" fill="white">Combo Meal</text>
+  <text x="880" y="653" font-family="Arial" font-size="10" fill="rgba(203,213,225,0.6)">Burger + Fries + Drink</text>
+  <rect x="846" y="658" width="32" height="16" rx="8" fill="rgba(52,211,153,0.2)"/>
+  <text x="862" y="670" font-family="Arial" font-size="8" font-weight="700" fill="#34d399" text-anchor="middle">NEW</text>
+  <text x="846" y="693" font-family="Arial" font-size="13" font-weight="800" fill="#34d399">Rs. 650</text>
+  <rect x="994" y="668" width="60" height="24" rx="12" fill="rgba(52,211,153,0.7)"/>
+  <text x="1024" y="684" font-family="Arial" font-size="10" font-weight="700" fill="white" text-anchor="middle">Add +</text>
+
+  <!-- Cart Pill top-right of menu -->
+  <rect x="1100" y="608" width="55" height="24" rx="12" fill="url(#fire)" opacity="0.9"/>
+  <text x="1127" y="624" font-family="Arial" font-size="10" font-weight="700" fill="white" text-anchor="middle">🛒 3</text>
+</svg>

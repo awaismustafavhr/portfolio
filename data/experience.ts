@@ -9,27 +9,26 @@ export type ExperienceItem = {
 
 export const experiences: ExperienceItem[] = [
   {
-    company: "Freelance",
+    company: "CodeDesk Studio",
     role: "Full Stack Developer",
-    type: "Freelance",
-    date: "2024 - Present",
+    type: "Onsite",
+    date: "June – Sep 2025",
     summary: [
-      "Developed and deployed multiple web applications using MERN stack for various clients.",
-      "Designed responsive user interfaces with React and Tailwind CSS.",
-      "Built RESTful APIs with Node.js and Express, integrating MongoDB databases.",
+      "Developed frontend and backend for production apps and websites using JavaScript, Node.js, and Next.js.",
+      "Contributed to multiple projects, collaborating with frontend and backend teams while gaining solid frontend design knowledge.",
+      "Actively participated in daily standups for progress updates and issue resolution.",
     ],
-    tags: ["React", "Node.js", "MongoDB", "Tailwind"],
+    tags: ["JavaScript", "Node.js", "Next.js", "React"],
   },
   {
-    company: "Self-Learning & Projects",
-    role: "MERN Stack Developer",
-    type: "Personal",
-    date: "2023 - 2024",
+    company: "Connect & Learn",
+    role: "Web Developer",
+    type: "Project",
+    date: "Jan 2024 – Sep 2024",
     summary: [
-      "Completed comprehensive courses on full stack web development.",
-      "Built multiple personal projects to practice and showcase skills.",
-      "Contributed to open-source projects and collaborated with other developers.",
+      "Developed a collaborative learning platform offering skill exchange, personalized tutoring, real-world project opportunities, and an innovative project ideas space.",
+      "The platform serves as an innovation hub, fostering creativity and creating a connected ecosystem for users to engage, excel, and advance their educational and professional pursuits.",
     ],
-    tags: ["Next.js", "TypeScript", "Git", "Vercel"],
+    tags: ["React", "Node.js", "Next.js", "Express", "MongoDB", "Tailwind CSS"],
   },
 ];

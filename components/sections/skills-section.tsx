@@ -11,6 +11,7 @@ import {
   GitBranch,
   Globe,
   Layout,
+  Monitor,
   Network,
   Palette,
   Send,
@@ -48,6 +49,7 @@ const iconMap: Record<string, React.ReactNode> = {
   Send: <Send className="h-5 w-5" />,
   Palette: <Palette className="h-5 w-5" />,
   Smartphone: <Smartphone className="h-5 w-5" />,
+  Monitor: <Monitor className="h-5 w-5" />,
 };
 
 const categoryIconMap: Record<SkillCategory, React.ReactNode> = {

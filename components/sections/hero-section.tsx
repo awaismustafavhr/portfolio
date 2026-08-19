@@ -213,8 +213,13 @@ export function HeroSection() {
                   />
                   {/* Icon */}
                   <span
-                    className="relative z-10 flex h-[18px] w-[18px] items-center justify-center text-text-secondary transition-all duration-400 ease-out group-hover/soc:scale-110"
-                    style={{ color: item.color }}
+                    className="social-icon-wrap relative z-10 flex h-[18px] w-[18px] items-center justify-center transition-all duration-400 ease-out group-hover/soc:scale-110"
+                    style={
+                      {
+                        color: "rgba(255,255,255,0.40)",
+                        "--brand-color": item.color,
+                      } as React.CSSProperties
+                    }
                   >
                     <SocialIcon type={item.icon} />
                   </span>
