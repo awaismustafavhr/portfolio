@@ -156,8 +156,8 @@ export function HeroSection() {
 
             <a
               className="glass-panel glass-hover border-gradient interactive-press focus-ring group inline-flex items-center gap-2.5 rounded-full border-white/[0.12] px-8 py-4 text-[14px] font-semibold text-white sm:px-10 sm:py-4.5 sm:text-sm"
-              download="Awais-Mustafa-Resume.pdf"
-              href="/Awais-Mustafa-Resume.pdf"
+              download="awais-mustafa-resume.pdf"
+              href="/awais-mustafa-resume.pdf"
             >
               <span className="relative flex h-6 w-6 items-center justify-center">
                 <Download className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5" />

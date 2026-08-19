@@ -187,7 +187,7 @@ portfolio/
 │   └── utils.ts
 ├── public/
 │   ├── images/
-│   └── Awais-Mustafa-Resume.pdf
+│   └── awais-mustafa-resume.pdf
 ├── package.json
 ├── tailwind.config.ts
 └── tsconfig.json
@@ -282,7 +282,7 @@ To use your real portrait:
 The resume download button points to:
 
 ```text
-public/Awais-Mustafa-Resume.pdf
+public/awais-mustafa-resume.pdf
 ```
 
 Replace this file with your real CV to make the download button work with your own resume.

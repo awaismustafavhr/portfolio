@@ -23,8 +23,8 @@ import { infoGrid, stats } from "@/data/site";
 import { useCounter } from "@/hooks/useCounter";
 import { cn } from "@/lib/utils";
 
-/* ─── Resume filename — must match /public exactly ───────────────────── */
-const RESUME_FILE = "Awais-Mustafa-Resume.pdf";
+/* ─── Resume filename — must match /public git-tracked filename exactly ─── */
+const RESUME_FILE = "awais-mustafa-resume.pdf";
 
 /* ─── Framer Motion variants ──────────────────────────────────────────── */
 const fadeLeft = {
