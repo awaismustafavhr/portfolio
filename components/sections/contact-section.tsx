@@ -52,7 +52,7 @@ export function ContactSection() {
         body: JSON.stringify(payload),
       });
 
-      const result = (await response.json()) as { message?: string };
+      const result = (await response.json()) as { success?: boolean; message?: string };
 
       if (!response.ok) {
         throw new Error(result.message ?? "Unable to send your message right now.");
