@@ -1,4 +1,4 @@
-﻿﻿"use client";
+﻿"use client";
 
 import { type ReactNode, useRef } from "react";
 import Image from "next/image";
@@ -198,7 +198,8 @@ export function AboutSection() {
             whileInView="visible"
           >
             {/* ── Live status badge ── */}
-            <div className="mb-6 inline-flex w-fit items-center gap-2.5 rounded-full border border-accent-cyan/30 bg-accent-cyan/[0.07] px-4 py-2">
+            <div className="mb-6 flex justify-center lg:justify-start">
+            <div className="inline-flex w-fit items-center gap-2.5 rounded-full border border-accent-cyan/30 bg-accent-cyan/[0.07] px-4 py-2">
               <span className="relative flex h-2 w-2">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent-cyan opacity-50" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-accent-cyan" />
@@ -208,9 +209,10 @@ export function AboutSection() {
                 Full Stack Developer
               </span>
             </div>
+            </div>
 
             {/* ── Headline ── */}
-            <h3 className="font-heading text-[26px] font-bold leading-[1.15] tracking-tight text-white sm:text-[30px] md:text-[34px]">
+            <h3 className="text-center lg:text-left font-heading text-[26px] font-bold leading-[1.15] tracking-tight text-white sm:text-[30px] md:text-[34px]">
               Building digital products
               <br />
               with{" "}
@@ -221,31 +223,40 @@ export function AboutSection() {
             </h3>
 
             {/* ── Bio ── */}
-            <div className="mt-7 space-y-4 text-[14px] leading-[1.9] text-text-secondary sm:text-[14.5px]">
-              <p>
-                <span className="float-left mr-2 -mt-0.5 font-heading text-[20px] font-bold leading-none text-gradient">
-                  I
-                </span>
-                am a dedicated full-stack developer and Software Engineering graduate
-                (COMSATS University, 2022–2026) with hands-on experience across web
-                development, data science, and production-grade full-stack systems.
-                Driven by a love for clean architecture and elegant user experiences.
-              </p>
-              <p>
-                With 1+ years of professional experience — including an onsite role at{" "}
-                <span className="font-semibold text-white/90">CodeDesk Studio</span> — I
-                have built and shipped production apps using JavaScript, React, Next.js,
-                and Node.js, collaborating across frontend and backend teams daily.
-              </p>
-              <p>
-                I am committed to continuous improvement, exploring new engineering
-                patterns, and delivering meaningful digital products that create real
-                impact for users and businesses.
-              </p>
+            <div className="mt-7 space-y-5 text-[14px] leading-[1.9] text-text-secondary sm:text-[14.5px]">
+              {/* Paragraph 1 — drop-cap intro */}
+              <div className="relative pl-4 border-l-2 border-accent-purple/50">
+                <p className="text-justify hyphens-auto">
+                  <span className="font-heading text-[22px] font-bold leading-none text-gradient align-middle mr-1">
+                    I
+                  </span>
+                  am a dedicated full-stack developer and Software Engineering graduate
+                  (COMSATS University, 2022–2026) with hands-on experience across web
+                  development, data science, and production-grade full-stack systems.
+                  Driven by a love for clean architecture and elegant user experiences.
+                </p>
+              </div>
+              {/* Paragraph 2 */}
+              <div className="relative pl-4 border-l-2 border-accent-cyan/40">
+                <p className="text-justify hyphens-auto">
+                  With 1+ years of professional experience — including an onsite role at{" "}
+                  <span className="font-semibold text-white/90">CodeDesk Studio</span> — I
+                  have built and shipped production apps using JavaScript, React, Next.js,
+                  and Node.js, collaborating across frontend and backend teams daily.
+                </p>
+              </div>
+              {/* Paragraph 3 */}
+              <div className="relative pl-4 border-l-2 border-accent-pink/40">
+                <p className="text-justify hyphens-auto">
+                  I am committed to continuous improvement, exploring new engineering
+                  patterns, and delivering meaningful digital products that create real
+                  impact for users and businesses.
+                </p>
+              </div>
             </div>
 
             {/* ── Tech pills ── */}
-            <div className="mt-7 flex flex-wrap gap-2">
+            <div className="mt-7 flex flex-wrap justify-center gap-2 lg:justify-start">
               {[
                 "React.js", "Next.js", "Node.js", "MongoDB",
                 "Flutter", "TypeScript", "Tailwind CSS", "Express.js",
