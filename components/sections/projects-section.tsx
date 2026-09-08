@@ -167,46 +167,82 @@ export function ProjectsSection({ onSelectProject }: ProjectsSectionProps) {
     if (typeof window === "undefined") return;
     if (isReducedMotion) return; // respect reduced motion
 
-    const track = carouselRef.current;
-    if (!track) return;
-
     let rafId: number | null = null;
-    const stepLoop = (time: number) => {
-      if (!lastFrameTimeRef.current) lastFrameTimeRef.current = time;
-      const last = lastFrameTimeRef.current;
-      const dt = Math.min(0.05, (time - last) / 1000); // cap delta to avoid jumps
-      lastFrameTimeRef.current = time;
+    let pollTimer: number | null = null;
+    let started = false;
 
-      if (!isInteractingRef.current) {
-        const direction = autoScrollDirectionRef.current;
-        const speed = speedRef.current; // px per second
-        const delta = direction * speed * dt;
+    const startLoop = () => {
+      const track = carouselRef.current;
+      if (!track) return false;
 
-        // perform scroll using pixel changes (no layout thrash)
-        track.scrollLeft = Math.max(0, Math.min(track.scrollLeft + delta, track.scrollWidth - track.clientWidth));
+      // Only start when there's something to scroll
+      if (track.scrollWidth <= track.clientWidth + 2) return false;
 
-        // Reverse direction smoothly at edges to avoid teleport
-        const maxScrollLeft = Math.max(0, track.scrollWidth - track.clientWidth);
-        if (track.scrollLeft <= 0 + 0.5) {
-          autoScrollDirectionRef.current = 1;
-        } else if (track.scrollLeft >= maxScrollLeft - 0.5) {
-          autoScrollDirectionRef.current = -1;
+      started = true;
+
+      const stepLoop = (time: number) => {
+        if (!lastFrameTimeRef.current) lastFrameTimeRef.current = time;
+        const last = lastFrameTimeRef.current!;
+        const dt = Math.min(0.05, (time - last) / 1000); // cap delta to avoid jumps
+        lastFrameTimeRef.current = time;
+
+        if (!isInteractingRef.current) {
+          const direction = autoScrollDirectionRef.current;
+          const speed = speedRef.current; // px per second
+          const delta = direction * speed * dt;
+
+          // perform scroll using pixel changes (no layout thrash)
+          const target = Math.max(0, Math.min(track.scrollLeft + delta, track.scrollWidth - track.clientWidth));
+          track.scrollLeft = target;
+
+          // Reverse direction smoothly at edges to avoid teleport
+          const maxScrollLeft = Math.max(0, track.scrollWidth - track.clientWidth);
+          if (track.scrollLeft <= 0 + 0.5) {
+            autoScrollDirectionRef.current = 1;
+          } else if (track.scrollLeft >= maxScrollLeft - 0.5) {
+            autoScrollDirectionRef.current = -1;
+          }
+        } else {
+          // Reset lastFrameTime so dt isn't huge when resuming
+          lastFrameTimeRef.current = time;
         }
-      }
+
+        rafId = requestAnimationFrame(stepLoop);
+        autoScrollRAFRef.current = rafId;
+      };
 
       rafId = requestAnimationFrame(stepLoop);
       autoScrollRAFRef.current = rafId;
+
+      return true;
     };
 
-    rafId = requestAnimationFrame(stepLoop);
-    autoScrollRAFRef.current = rafId;
+    const tryStart = () => {
+      if (started) return;
+      if (startLoop()) return;
+      // otherwise poll until ready (carousel rendered or images loaded)
+      pollTimer = window.setTimeout(tryStart, 120);
+    };
+
+    tryStart();
+
+    // restart when window resized (content size may change)
+    const onResize = () => {
+      if (!started) return;
+      // if started, nothing; if not started, try starting again
+      if (!started) tryStart();
+    };
+
+    window.addEventListener("resize", onResize);
 
     return () => {
       if (rafId) cancelAnimationFrame(rafId);
+      if (pollTimer) window.clearTimeout(pollTimer);
       autoScrollRAFRef.current = null;
       lastFrameTimeRef.current = null;
+      window.removeEventListener("resize", onResize);
     };
-  }, [carouselRef]);
+  }, []);
 
   return (
     <section className="section-shell relative py-28 md:py-32" id="projects">
