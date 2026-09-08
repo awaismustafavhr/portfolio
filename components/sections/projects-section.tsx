@@ -17,6 +17,40 @@ export function ProjectsSection({ onSelectProject }: ProjectsSectionProps) {
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(true);
 
+  // Auto-scroll refs/state
+  const isReducedMotion = typeof window !== "undefined" && window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const isInteractingRef = useRef(false);
+  const autoScrollDirectionRef = useRef<1 | -1>(1);
+  const autoScrollRAFRef = useRef<number | null>(null);
+  const pauseTimeoutRef = useRef<number | null>(null);
+  const lastFrameTimeRef = useRef<number | null>(null);
+  // pixels per second (slow premium speed)
+  const speedRef = useRef(20); // ~20 px/s — calm and slow
+
+  const pauseAutoScrollTemporarily = (ms = 2000) => {
+    if (typeof window === "undefined") return;
+    isInteractingRef.current = true;
+    if (pauseTimeoutRef.current) window.clearTimeout(pauseTimeoutRef.current);
+    pauseTimeoutRef.current = window.setTimeout(() => {
+      isInteractingRef.current = false;
+      pauseTimeoutRef.current = null;
+    }, ms);
+  };
+
+  const stopAutoScroll = () => {
+    if (autoScrollRAFRef.current) cancelAnimationFrame(autoScrollRAFRef.current);
+    autoScrollRAFRef.current = null;
+    if (pauseTimeoutRef.current) {
+      window.clearTimeout(pauseTimeoutRef.current);
+      pauseTimeoutRef.current = null;
+    }
+    isInteractingRef.current = true;
+  };
+
+  const resumeAutoScroll = () => {
+    isInteractingRef.current = false;
+  };
+
   const featuredProjects = useMemo(
     () => projects.filter((project) => project.featured).slice(0, 6),
     [],
@@ -46,9 +80,58 @@ export function ProjectsSection({ onSelectProject }: ProjectsSectionProps) {
     track.addEventListener("scroll", handleScroll, { passive: true });
     window.addEventListener("resize", handleResize);
 
+    // Interaction handlers for pause/resume auto-scroll
+    const onPointerEnter = () => {
+      isInteractingRef.current = true;
+      if (pauseTimeoutRef.current) window.clearTimeout(pauseTimeoutRef.current);
+    };
+    const onPointerLeave = () => {
+      // resume shortly after pointer leaves
+      if (pauseTimeoutRef.current) window.clearTimeout(pauseTimeoutRef.current);
+      pauseTimeoutRef.current = window.setTimeout(() => {
+        isInteractingRef.current = false;
+        pauseTimeoutRef.current = null;
+      }, 700);
+    };
+
+    const onPointerDown = () => {
+      isInteractingRef.current = true;
+      if (pauseTimeoutRef.current) window.clearTimeout(pauseTimeoutRef.current);
+    };
+
+    const onPointerUp = () => {
+      // resume after short delay
+      if (pauseTimeoutRef.current) window.clearTimeout(pauseTimeoutRef.current);
+      pauseTimeoutRef.current = window.setTimeout(() => {
+        isInteractingRef.current = false;
+        pauseTimeoutRef.current = null;
+      }, 900);
+    };
+
+    const onWheel = () => {
+      // user scroll via wheel — pause briefly
+      pauseAutoScrollTemporarily(1200);
+    };
+
+    track.addEventListener("pointerenter", onPointerEnter);
+    track.addEventListener("pointerleave", onPointerLeave);
+    track.addEventListener("pointerdown", onPointerDown, { passive: true });
+    window.addEventListener("pointerup", onPointerUp);
+    track.addEventListener("touchstart", onPointerDown, { passive: true });
+    window.addEventListener("touchend", onPointerUp);
+    track.addEventListener("wheel", onWheel, { passive: true });
+
     return () => {
       track.removeEventListener("scroll", handleScroll);
       window.removeEventListener("resize", handleResize);
+
+      track.removeEventListener("pointerenter", onPointerEnter);
+      track.removeEventListener("pointerleave", onPointerLeave);
+      track.removeEventListener("pointerdown", onPointerDown);
+      window.removeEventListener("pointerup", onPointerUp);
+      track.removeEventListener("touchstart", onPointerDown as EventListener);
+      window.removeEventListener("touchend", onPointerUp as EventListener);
+      track.removeEventListener("wheel", onWheel as EventListener);
     };
   }, [updateArrowState]);
 
@@ -67,6 +150,9 @@ export function ProjectsSection({ onSelectProject }: ProjectsSectionProps) {
     const cardWidth = firstCard.getBoundingClientRect().width;
     const step = Math.round(cardWidth + gap);
 
+    // Pause auto-scroll briefly when user manually uses arrows
+    pauseAutoScrollTemporarily(1800);
+
     // Use native smooth scroll where supported
     track.scrollBy({
       left: direction === "next" ? step : -step,
@@ -75,6 +161,52 @@ export function ProjectsSection({ onSelectProject }: ProjectsSectionProps) {
 
     // After scrolling, arrow states are updated by the scroll listener
   };
+
+  // Auto-scroll animation loop (requestAnimationFrame)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (isReducedMotion) return; // respect reduced motion
+
+    const track = carouselRef.current;
+    if (!track) return;
+
+    let rafId: number | null = null;
+    const stepLoop = (time: number) => {
+      if (!lastFrameTimeRef.current) lastFrameTimeRef.current = time;
+      const last = lastFrameTimeRef.current;
+      const dt = Math.min(0.05, (time - last) / 1000); // cap delta to avoid jumps
+      lastFrameTimeRef.current = time;
+
+      if (!isInteractingRef.current) {
+        const direction = autoScrollDirectionRef.current;
+        const speed = speedRef.current; // px per second
+        const delta = direction * speed * dt;
+
+        // perform scroll using pixel changes (no layout thrash)
+        track.scrollLeft = Math.max(0, Math.min(track.scrollLeft + delta, track.scrollWidth - track.clientWidth));
+
+        // Reverse direction smoothly at edges to avoid teleport
+        const maxScrollLeft = Math.max(0, track.scrollWidth - track.clientWidth);
+        if (track.scrollLeft <= 0 + 0.5) {
+          autoScrollDirectionRef.current = 1;
+        } else if (track.scrollLeft >= maxScrollLeft - 0.5) {
+          autoScrollDirectionRef.current = -1;
+        }
+      }
+
+      rafId = requestAnimationFrame(stepLoop);
+      autoScrollRAFRef.current = rafId;
+    };
+
+    rafId = requestAnimationFrame(stepLoop);
+    autoScrollRAFRef.current = rafId;
+
+    return () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      autoScrollRAFRef.current = null;
+      lastFrameTimeRef.current = null;
+    };
+  }, [carouselRef]);
 
   return (
     <section className="section-shell relative py-28 md:py-32" id="projects">
