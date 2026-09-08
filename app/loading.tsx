@@ -5,8 +5,9 @@ export default function Loading() {
       style={{ background: "linear-gradient(180deg, #07070d 0%, #0a0a16 60%, #080814 100%)" }}
     >
       {/* Ambient glow */}
-      <div className="pointer-events-none absolute h-[320px] w-[320px] rounded-full bg-accent-purple/20 blur-[96px]" />
-      <div className="pointer-events-none absolute h-[260px] w-[260px] rounded-full bg-accent-cyan/15 blur-[80px]" />
+      {/* Ambient glows (optimized for fewer repaints) */}
+      <div className="pointer-events-none absolute h-[280px] w-[280px] rounded-full bg-accent-purple/18 loading-ambient-glow" />
+      <div className="pointer-events-none absolute h-[220px] w-[220px] rounded-full bg-accent-cyan/12 loading-ambient-glow" />
 
       <div className="relative flex flex-col items-center gap-6">
         {/* Logo badge */}
@@ -17,12 +18,9 @@ export default function Loading() {
           </div>
         </div>
 
-        {/* Indeterminate loading bar */}
-        <div className="h-[3px] w-48 overflow-hidden rounded-full" style={{ background: "rgba(255,255,255,0.07)" }}>
-          <div
-            className="h-full w-1/3 rounded-full accent-gradient-animated"
-            style={{ animation: "shimmer 1.4s ease-in-out infinite" }}
-          />
+        {/* Indeterminate loading bar (optimized) */}
+        <div className="loading-bar h-[3px] w-48 overflow-hidden rounded-full" style={{ background: "rgba(255,255,255,0.07)" }}>
+          <div className="loading-bar-thumb" />
         </div>
       </div>
     </div>

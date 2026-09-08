@@ -326,8 +326,51 @@ textarea {
     animation: shimmer 3s linear infinite;
   }
 
+  /* Optimized loading shimmer: use transform for smoother GPU-accelerated animation */
+  .loading-bar {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .loading-bar-thumb {
+    position: absolute;
+    left: -40%;
+    top: 0;
+    height: 100%;
+    width: 40%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+    border-radius: 999px;
+    transform: translateX(0);
+    will-change: transform, opacity;
+    animation: loading-move 2.6s linear infinite;
+  }
+
+  @keyframes loading-move {
+    0% { transform: translateX(-120%); }
+    100% { transform: translateX(220%); }
+  }
+
+  .loading-ambient-glow {
+    filter: blur(40px);
+    opacity: 0.42;
+    transform: translateZ(0);
+    will-change: opacity, transform;
+  }
+
   .focus-ring {
     transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .loading-bar-thumb {
+      animation: none !important;
+    }
+
+    .accent-gradient-animated,
+    .text-gradient,
+    .shimmer-bg {
+      animation: none !important;
+    }
   }
 
   .focus-ring:focus-visible {
