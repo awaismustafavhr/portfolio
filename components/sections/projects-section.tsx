@@ -1,16 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { ArrowUpRight, ExternalLink, Github, FolderKanban, Sparkles } from "lucide-react";
+import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { SectionHeading } from "./section-heading";
-import {
-  type Project,
-  type ProjectCategory,
-  projectCategories,
-  projects,
-} from "@/data/projects";
+import { type Project, projects } from "@/data/projects";
 import { cn } from "@/lib/utils";
 
 type ProjectsSectionProps = {
@@ -18,22 +13,71 @@ type ProjectsSectionProps = {
 };
 
 export function ProjectsSection({ onSelectProject }: ProjectsSectionProps) {
-  const [projectCategory, setProjectCategory] = useState<ProjectCategory>("All");
+  const carouselRef = useRef<HTMLDivElement | null>(null);
+  const [canScrollPrev, setCanScrollPrev] = useState(false);
+  const [canScrollNext, setCanScrollNext] = useState(true);
 
-  const filteredProjects = useMemo(
-    () =>
-      projectCategory === "All"
-        ? projects
-        : projects.filter((project) => project.category === projectCategory),
-    [projectCategory],
+  const featuredProjects = useMemo(
+    () => projects.filter((project) => project.featured).slice(0, 6),
+    [],
   );
 
-  const featuredProjects = filteredProjects.filter((project) => project.featured);
-  const regularProjects = filteredProjects.filter((project) => !project.featured);
+  const updateArrowState = useCallback(() => {
+    const track = carouselRef.current;
+    if (!track) return;
+
+    const maxScrollLeft = Math.max(0, track.scrollWidth - track.clientWidth);
+    const left = track.scrollLeft;
+    const tolerance = 2;
+
+    setCanScrollPrev(left > tolerance);
+    setCanScrollNext(left < maxScrollLeft - tolerance);
+  }, []);
+
+  useEffect(() => {
+    const track = carouselRef.current;
+    if (!track) return;
+
+    updateArrowState();
+
+    const handleScroll = () => updateArrowState();
+    const handleResize = () => updateArrowState();
+
+    track.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      track.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [updateArrowState]);
+
+  const scrollByCard = (direction: "prev" | "next") => {
+    const track = carouselRef.current;
+    if (!track) return;
+
+    const firstCard = track.querySelector<HTMLElement>("[data-project-card]");
+    if (!firstCard) return;
+
+    const styles = getComputedStyle(track);
+    // Robustly read gap: try 'gap', then 'column-gap', then fallback to 0
+    const gapValue = styles.getPropertyValue("gap") || styles.getPropertyValue("column-gap") || "0";
+    const gap = Number.parseFloat(gapValue.replace("px", "")) || 0;
+
+    const cardWidth = firstCard.getBoundingClientRect().width;
+    const step = Math.round(cardWidth + gap);
+
+    // Use native smooth scroll where supported
+    track.scrollBy({
+      left: direction === "next" ? step : -step,
+      behavior: "smooth",
+    });
+
+    // After scrolling, arrow states are updated by the scroll listener
+  };
 
   return (
     <section className="section-shell relative py-28 md:py-32" id="projects">
-      {/* Background elements */}
       <div className="section-grid-bg opacity-25" />
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div
@@ -50,84 +94,73 @@ export function ProjectsSection({ onSelectProject }: ProjectsSectionProps) {
         <SectionHeading
           eyebrow="WHAT I&apos;VE BUILT"
           title="Featured Projects"
-          subtitle="A curated selection of projects showcasing my engineering approach, design sensibility, and ability to ship premium products."
+          subtitle="A focused showcase of production work with a polished, swipe-friendly browsing experience."
         />
 
-        {/* Category Filters */}
-        <div className="mt-14">
-          <div className="flex flex-wrap justify-center gap-2.5">
-            {projectCategories.map((category) => (
-              <button
-                key={category}
-                className={cn(
-                  "group relative inline-flex items-center gap-2 rounded-2xl px-5 py-3 text-[13px] font-semibold transition-all duration-300 interactive-press focus-ring",
-                  projectCategory === category
-                    ? "accent-gradient-animated glow-ring text-white"
-                    : "glass-panel text-text-secondary hover:text-white border-white/[0.08] hover:border-white/[0.16]",
-                )}
-                onClick={() => setProjectCategory(category)}
-                type="button"
-              >
-                <FolderKanban className={cn("h-4 w-4 transition-transform duration-300", projectCategory === category && "scale-110")} />
-                {category}
-              </button>
-            ))}
+        <div className="mt-16 flex items-end justify-between gap-4">
+          <div>
+            <p className="font-heading text-[24px] font-bold tracking-tight text-white md:text-[28px]">
+              Selected Work
+            </p>
+            <p className="mt-1 text-[12px] text-text-muted">
+              Scroll, swipe, or use arrows to explore case studies.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              aria-label="Previous project"
+              className={cn(
+                "focus-ring inline-flex h-11 w-11 items-center justify-center rounded-full border transition-all duration-300",
+                canScrollPrev
+                  ? "border-white/[0.18] bg-white/[0.03] text-white hover:-translate-y-0.5 hover:border-accent-cyan/45 hover:bg-white/[0.08]"
+                  : "cursor-not-allowed border-white/[0.08] bg-white/[0.02] text-white/35",
+              )}
+              disabled={!canScrollPrev}
+              onClick={() => scrollByCard("prev")}
+              type="button"
+            >
+              <ChevronLeft className="h-[18px] w-[18px]" />
+            </button>
+            <button
+              aria-label="Next project"
+              className={cn(
+                "focus-ring inline-flex h-11 w-11 items-center justify-center rounded-full border transition-all duration-300",
+                canScrollNext
+                  ? "border-white/[0.18] bg-white/[0.03] text-white hover:-translate-y-0.5 hover:border-accent-cyan/45 hover:bg-white/[0.08]"
+                  : "cursor-not-allowed border-white/[0.08] bg-white/[0.02] text-white/35",
+              )}
+              disabled={!canScrollNext}
+              onClick={() => scrollByCard("next")}
+              type="button"
+            >
+              <ChevronRight className="h-[18px] w-[18px]" />
+            </button>
           </div>
         </div>
 
-        {/* Featured Projects */}
-        {featuredProjects.length > 0 && (
-          <div className="mt-16 space-y-10">
-            <div className="mb-8 flex items-center gap-3">
-              <span className="flex h-8 w-8 items-center justify-center rounded-xl accent-gradient-animated text-white shadow-md">
-                <Sparkles className="h-4 w-4" />
-              </span>
-              <div>
-                <p className="font-heading text-[17px] font-bold text-white">Selected Work</p>
-                <p className="text-[11px] text-text-muted">Premium showcase projects</p>
-              </div>
-            </div>
-            {featuredProjects.map((project, index) => (
-              <FeaturedProjectCard
-                key={project.id}
-                index={index}
-                onOpen={() => onSelectProject(project)}
-                project={project}
-              />
-            ))}
-          </div>
-        )}
-
-        {/* Regular Projects Grid */}
-        {regularProjects.length > 0 ? (
-          <div className="mt-20">
-            <div className="mb-8 flex items-center gap-3">
-              <span className="flex h-8 w-8 items-center justify-center rounded-xl border border-white/[0.12] bg-white/[0.04] text-text-secondary">
-                <FolderKanban className="h-4 w-4" />
-              </span>
-              <div>
-                <p className="font-heading text-[17px] font-bold text-white">More Projects</p>
-                <p className="text-[11px] text-text-muted">Additional work &amp; experiments</p>
-              </div>
-            </div>
-            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-              {regularProjects.map((project, index) => (
-                <RegularProjectCard
-                  key={project.id}
-                  index={index}
-                  onOpen={() => onSelectProject(project)}
-                  project={project}
-                />
-              ))}
-            </div>
-          </div>
-        ) : null}
+        <div
+          className="hide-scrollbar mt-8 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-3 sm:gap-6"
+          ref={carouselRef}
+          role="list"
+          aria-label="Featured projects carousel"
+          style={{ scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch', scrollBehavior: 'smooth' }}
+        >
+          {featuredProjects.map((project, index) => (
+            <ProjectCarouselCard
+              index={index}
+              key={project.id}
+              onOpen={() => onSelectProject(project)}
+              project={project}
+            />
+          ))}
+        </div>
       </div>
     </section>
   );
 }
 
-function FeaturedProjectCard({
+function ProjectCarouselCard({
   project,
   onOpen,
   index,
@@ -142,275 +175,85 @@ function FeaturedProjectCard({
     !project.liveUrl.includes("demo.com") &&
     !project.liveUrl.includes("yourportfolio.com");
 
-  const isReversed = index % 2 === 1;
-
   return (
     <motion.article
-      className="border-gradient glass-panel glass-hover group relative overflow-hidden rounded-[28px] border border-white/[0.08] transition-all duration-600"
-      initial={{ opacity: 0, y: 56 }}
-      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: index * 0.14 }}
-      viewport={{ once: true, amount: 0.2 }}
+      className={cn(
+        "group/card border-gradient glass-panel relative flex min-h-[420px] flex-none snap-start flex-col overflow-hidden rounded-[24px] border border-white/[0.09] transition-all duration-300 hover:-translate-y-1.5 hover:border-white/[0.18]",
+        "w-[88%] sm:w-[72%] md:w-[56%] lg:w-[calc((100%-3rem)/3.35)] xl:w-[calc((100%-3.4rem)/3.35)]",
+      )}
+      data-project-card
+      initial={{ opacity: 0, y: 26 }}
+      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: index * 0.08 }}
+      viewport={{ once: true, amount: 0.15 }}
       whileInView={{ opacity: 1, y: 0 }}
     >
-      {/* Project color wash */}
-      <div
-        className="pointer-events-none absolute -inset-20 opacity-0 blur-[80px] transition-opacity duration-[700ms] ease-out group-hover:opacity-30"
-        style={{ backgroundColor: project.color }}
-      />
+      <div className="pointer-events-none absolute inset-0 rounded-[24px] bg-gradient-to-br from-white/[0.03] via-transparent to-transparent" />
 
-      <div
-        className={cn(
-          "grid w-full gap-0 text-left",
-          "lg:grid-cols-[1.25fr_1fr]",
-          isReversed && "lg:[direction:rtl]",
-        )}
-      >
-        {/* Image Area */}
-        <button
-          className="group/img relative min-h-[320px] overflow-hidden bg-black/50 focus-ring sm:min-h-[380px] lg:min-h-[440px]"
-          onClick={onOpen}
-          type="button"
-        >
-          {/* Frame border accent */}
-          <div className={cn(
-            "pointer-events-none absolute inset-0 z-10 border-[1px] border-transparent transition-all duration-500 group-hover/img:border-white/[0.08]",
-            "lg:border-r lg:border-white/[0.06]",
-            isReversed && "lg:border-r-0 lg:border-l",
-          )} />
-
-          <Image
-            alt={project.title}
-            className="h-full w-full object-cover transition-transform duration-[1.2s] ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform group-hover/img:scale-[1.08]"
-            height={960}
-            src={project.image}
-            width={1400}
-          />
-
-          {/* Layered gradients for depth */}
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-black/10" />
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-black/40 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover/img:opacity-100" />
-
-          {/* Top-left category */}
-          <div className="absolute left-5 top-5 z-20">
-            <span className="glass-panel-strong inline-flex items-center gap-2 rounded-full border-white/[0.12] px-3.5 py-1.5 text-[10.5px] font-bold uppercase tracking-[0.22em] text-gradient backdrop-blur-xl">
-              {project.category}
-            </span>
-          </div>
-
-          {/* Top-right project number */}
-          <div className="absolute right-5 top-5 z-20">
-            <span className="glass-panel-strong inline-flex items-center gap-1 rounded-full border-white/[0.12] px-3 py-1.5 backdrop-blur-xl">
-              <span className="font-heading text-[11px] font-bold text-gradient">
-                {String(project.id).padStart(2, "0")}
-              </span>
-              <span className="h-1 w-1 rounded-full bg-white/30" />
-              <span className="text-[9px] font-semibold uppercase tracking-widest text-text-muted">PRJ</span>
-            </span>
-          </div>
-
-          {/* View overlay button */}
-          <div className="absolute inset-0 z-20 flex items-center justify-center opacity-0 transition-all duration-500 group-hover/img:opacity-100">
-            <div className="glass-panel-strong flex items-center gap-2.5 rounded-full border-white/[0.18] px-5 py-3 backdrop-blur-xl">
-              <span className="text-[13px] font-semibold text-white">View Details</span>
-              <span className="flex h-7 w-7 items-center justify-center rounded-full accent-gradient text-white shadow-md">
-                <ArrowUpRight className="h-3.5 w-3.5" />
-              </span>
-            </div>
-          </div>
-
-          {/* Bottom accent line */}
-          <div className="absolute bottom-0 left-0 right-0 z-10 h-[3px] origin-left scale-x-0 accent-gradient-animated transition-transform duration-700 ease-out group-hover/img:scale-x-100" />
-        </button>
-
-        {/* Info Panel */}
-        <div className={cn(
-          "relative flex flex-col justify-center p-7 sm:p-9 lg:p-10",
-          isReversed && "lg:[direction:ltr]",
-        )}>
-          {/* Large decorative number */}
-          <span className="pointer-events-none absolute right-6 top-4 select-none font-heading text-[88px] font-bold leading-none text-white/[0.04] transition-colors duration-500 group-hover:text-accent-cyan/[0.12] sm:text-[104px] lg:right-8 lg:top-6">
-            {String(project.id).padStart(2, "0")}
-          </span>
-
-          <button
-            className="relative z-10 w-full text-left focus-ring rounded-xl"
-            onClick={onOpen}
-            type="button"
-          >
-            {/* Status badge */}
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/[0.06] px-3 py-1.5">
-              <span className="relative flex h-1.5 w-1.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-40" />
-                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
-              </span>
-              <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-emerald-400">
-                Featured Project
-              </span>
-            </div>
-
-            <h3 className="font-heading text-[26px] font-bold leading-[1.15] tracking-tight text-white transition-colors duration-300 group-hover:text-accent-cyan sm:text-[30px] md:text-[34px]">
-              {project.title}
-            </h3>
-
-            <p className="mt-5 text-[14px] leading-[1.85] text-text-secondary sm:text-[15px]">
-              {project.description}
-            </p>
-
-            {/* Tech stack badges */}
-            <div className="mt-6 flex flex-wrap gap-2">
-              {project.tags.slice(0, 6).map((tag) => (
-                <span
-                  key={tag}
-                  className="glass-panel inline-flex items-center gap-1.5 rounded-xl border-white/[0.08] px-3 py-1.5 text-[10.5px] font-semibold uppercase tracking-[0.16em] text-text-secondary transition-all duration-300 group-hover:border-white/[0.16] group-hover:text-white"
-                >
-                  <span className="h-1 w-1 rounded-full accent-gradient" />
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </button>
-
-          {/* Action Buttons */}
-          <div className="relative z-10 mt-8 flex flex-wrap items-center gap-3">
-            {hasLiveUrl ? (
-              <a
-                href={project.liveUrl}
-                rel="noreferrer noopener"
-                target="_blank"
-                className="btn-primary glow-ring inline-flex items-center gap-2.5 overflow-hidden rounded-2xl accent-gradient-animated px-6 py-3.5 text-[13px] font-semibold text-white interactive-press focus-ring"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <span className="relative z-10 flex items-center gap-2.5">
-                  Live Project
-                  <ExternalLink className="h-4 w-4" />
-                </span>
-              </a>
-            ) : (
-              <button
-                type="button"
-                onClick={onOpen}
-                className="btn-primary glow-ring inline-flex items-center gap-2.5 overflow-hidden rounded-2xl accent-gradient-animated px-6 py-3.5 text-[13px] font-semibold text-white interactive-press focus-ring"
-              >
-                <span className="relative z-10 flex items-center gap-2.5">
-                  View Demo
-                  <ExternalLink className="h-4 w-4" />
-                </span>
-              </button>
-            )}
-            <a
-              href={project.githubUrl}
-              rel="noreferrer noopener"
-              target="_blank"
-              className="glass-panel group/gh inline-flex items-center gap-2.5 rounded-2xl border-white/[0.1] px-6 py-3.5 text-[13px] font-semibold text-white transition-all duration-300 hover:border-accent-purple/40 hover:bg-white/[0.04] interactive-press focus-ring"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <Github className="h-4 w-4 transition-colors duration-300 group-hover/gh:text-accent-purple" />
-              Source Code
-            </a>
-          </div>
-        </div>
-      </div>
-    </motion.article>
-  );
-}
-
-function RegularProjectCard({
-  project,
-  onOpen,
-  index,
-}: {
-  project: Project;
-  onOpen: () => void;
-  index: number;
-}) {
-  return (
-    <motion.article
-      className="group/card"
-      initial={{ opacity: 0, y: 44 }}
-      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1], delay: index * 0.09 }}
-      viewport={{ once: true, amount: 0.25 }}
-      whileInView={{ opacity: 1, y: 0 }}
-    >
       <button
-        className="border-gradient glass-panel glass-hover focus-ring relative flex h-full w-full flex-col overflow-hidden rounded-[22px] border border-white/[0.08] text-left transition-all duration-[450ms] hover:-translate-y-2 focus-visible:outline-none"
+        className="focus-ring group/img relative block aspect-[16/9] w-full overflow-hidden bg-black/45"
         onClick={onOpen}
         type="button"
       >
-        {/* Colored ambient glow */}
-        <div
-          className="pointer-events-none absolute -inset-10 opacity-0 blur-[50px] transition-all duration-[600ms] ease-out group-hover/card:opacity-35"
-          style={{ backgroundColor: project.color }}
+        <Image
+          alt={project.title}
+          className="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/card:scale-[1.035]"
+          height={720}
+          src={project.image}
+          width={1280}
         />
-
-        {/* Image */}
-        <div className="relative h-52 overflow-hidden bg-black/45 sm:h-56">
-          <div className="pointer-events-none absolute inset-0 z-10 border-b border-white/[0.06]" />
-          <Image
-            alt={project.title}
-            className="h-full w-full object-cover transition-all duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform group-hover/card:scale-110"
-            height={480}
-            src={project.image}
-            width={720}
-          />
-          {/* Overlays */}
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-black/5" />
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-accent-purple/[0.08] via-transparent to-accent-cyan/[0.06] opacity-0 transition-opacity duration-500 group-hover/card:opacity-100" />
-
-          {/* Category badge */}
-          <span className="glass-panel-strong absolute left-4 top-4 z-20 inline-flex items-center gap-1.5 rounded-full border-white/[0.1] px-3 py-1.5 backdrop-blur-xl">
-            <span className="h-1 w-1 rounded-full accent-gradient" />
-            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-gradient">
-              {project.category}
-            </span>
-          </span>
-
-          {/* Hover view badge */}
-          <div className="pointer-events-none absolute inset-0 z-20 flex items-end justify-end p-5 opacity-0 transition-all duration-500 ease-out group-hover/card:opacity-100">
-            <span className="flex h-11 w-11 items-center justify-center rounded-2xl accent-gradient-animated text-white shadow-lg">
-              <ArrowUpRight className="h-4.5 w-4.5" />
-            </span>
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="relative z-10 flex flex-1 flex-col p-6">
-          <h3 className="font-heading text-[19px] font-bold leading-snug tracking-tight text-white transition-colors duration-300 group-hover/card:text-accent-cyan sm:text-xl">
-            {project.title}
-          </h3>
-
-          <p className="mt-3 line-clamp-2 text-[13px] leading-[1.75] text-text-secondary">
-            {project.description}
-          </p>
-
-          {/* Tags */}
-          <div className="mt-5 flex flex-wrap gap-1.5">
-            {project.tags.slice(0, 4).map((tag) => (
-              <span
-                key={tag}
-                className="inline-flex items-center rounded-lg bg-white/[0.04] border border-white/[0.05] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-text-secondary transition-colors duration-300 group-hover/card:text-white/80"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-
-          {/* Action icons */}
-          <div className="mt-6 flex items-center justify-between border-t border-white/[0.06] pt-5">
-            <span className="flex items-center gap-2">
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.03] text-white/80 transition-all duration-300 group-hover/card:border-accent-cyan/40 group-hover/card:text-accent-cyan">
-                <ExternalLink className="h-4 w-4" />
-              </span>
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.03] text-white/80 transition-all duration-300 group-hover/card:border-accent-purple/40 group-hover/card:text-accent-purple">
-                <Github className="h-4 w-4" />
-              </span>
-            </span>
-            <span className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-text-muted transition-colors duration-300 group-hover/card:text-white">
-              View
-              <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover/card:translate-x-0.5 group-hover/card:-translate-y-0.5" />
-            </span>
-          </div>
-        </div>
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/5" />
       </button>
+
+      <div className="relative z-10 flex flex-1 flex-col px-5 pb-5 pt-4 sm:px-6 sm:pb-6 sm:pt-5">
+        <h3 className="font-heading text-[20px] font-bold leading-tight tracking-tight text-white">
+          {project.title}
+        </h3>
+
+        <p className="mt-3 line-clamp-2 text-[13.5px] leading-7 text-text-secondary">
+          {project.description}
+        </p>
+
+        <div className="mt-4 flex flex-wrap gap-2">
+          {project.tags.slice(0, 4).map((tag) => (
+            <span
+              className="inline-flex items-center rounded-full border border-white/[0.1] bg-white/[0.04] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-text-secondary"
+              key={tag}
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+
+        <div className="mt-auto pt-6">
+          {hasLiveUrl ? (
+            <a
+              className="group/link focus-ring inline-flex items-center gap-1.5 rounded-md text-[12px] font-semibold uppercase tracking-[0.14em] text-white/88 transition-colors duration-300 hover:text-accent-cyan"
+              href={project.liveUrl}
+              onClick={(event) => event.stopPropagation()}
+              rel="noreferrer noopener"
+              target="_blank"
+            >
+              <span className="relative after:absolute after:bottom-[-2px] after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-300 group-hover/link:after:scale-x-100">
+                View Case Study
+              </span>
+              <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5" />
+            </a>
+          ) : (
+            <button
+              className="group/link focus-ring inline-flex items-center gap-1.5 rounded-md text-[12px] font-semibold uppercase tracking-[0.14em] text-white/88 transition-colors duration-300 hover:text-accent-cyan"
+              onClick={onOpen}
+              type="button"
+            >
+              <span className="relative after:absolute after:bottom-[-2px] after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-300 group-hover/link:after:scale-x-100">
+                View Case Study
+              </span>
+              <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5" />
+            </button>
+          )}
+        </div>
+      </div>
+
+      <div className="pointer-events-none absolute inset-0 rounded-[24px] shadow-[0_14px_38px_-28px_rgba(0,0,0,0.75)] transition-all duration-300 group-hover/card:shadow-[0_30px_58px_-24px_rgba(0,0,0,0.82)]" />
     </motion.article>
   );
 }

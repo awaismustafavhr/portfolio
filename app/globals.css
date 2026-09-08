@@ -335,6 +335,49 @@ textarea {
     border-color: rgba(6, 182, 212, 0.6);
     box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.25);
   }
+
+  .hero-cta-primary {
+    transition:
+      transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+      filter 0.28s ease;
+  }
+
+  .hero-cta-primary:hover {
+    transform: translateY(-2px);
+    filter: saturate(1.03);
+    box-shadow:
+      0 0 0 1px rgba(124, 58, 237, 0.3),
+      0 18px 34px -18px rgba(124, 58, 237, 0.72),
+      0 18px 48px -26px rgba(6, 182, 212, 0.55);
+  }
+
+  .hero-cta-secondary {
+    transition:
+      transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+      background-color 0.28s ease,
+      border-color 0.28s ease,
+      box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .hero-cta-secondary:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(255, 255, 255, 0.25);
+    box-shadow:
+      0 16px 34px -18px rgba(0, 0, 0, 0.75),
+      0 0 0 1px rgba(255, 255, 255, 0.08),
+      0 0 30px -16px rgba(6, 182, 212, 0.42);
+  }
+
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 /* Lenis smooth scrolling compatibility rules */

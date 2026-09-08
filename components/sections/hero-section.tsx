@@ -142,7 +142,7 @@ export function HeroSection() {
           {/* CTA Buttons */}
           <motion.div variants={fadeUp} className="mt-11 flex flex-wrap items-center justify-center gap-4">
             <button
-              className="btn-primary glow-ring-strong interactive-press focus-ring inline-flex items-center gap-2.5 overflow-hidden rounded-full accent-gradient-animated px-8 py-4 text-[14px] font-semibold text-white sm:px-10 sm:py-4.5 sm:text-sm"
+              className="btn-primary hero-cta-primary glow-ring-strong interactive-press focus-ring group inline-flex items-center gap-2.5 overflow-hidden rounded-full accent-gradient-animated px-8 py-4 text-[14px] font-semibold text-white sm:px-10 sm:py-4.5 sm:text-sm"
               onClick={() => scrollTo("#projects")}
               type="button"
             >
@@ -155,7 +155,7 @@ export function HeroSection() {
             </button>
 
             <a
-              className="glass-panel glass-hover border-gradient interactive-press focus-ring group inline-flex items-center gap-2.5 rounded-full border-white/[0.12] px-8 py-4 text-[14px] font-semibold text-white sm:px-10 sm:py-4.5 sm:text-sm"
+              className="glass-panel border-gradient hero-cta-secondary interactive-press focus-ring group inline-flex items-center gap-2.5 rounded-full border-white/[0.12] px-8 py-4 text-[14px] font-semibold text-white sm:px-10 sm:py-4.5 sm:text-sm"
               download="awais-mustafa-resume.pdf"
               href="/awais-mustafa-resume.pdf"
             >
