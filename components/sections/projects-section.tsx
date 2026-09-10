@@ -17,38 +17,24 @@ export function ProjectsSection({ onSelectProject }: ProjectsSectionProps) {
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(true);
 
-  // Auto-scroll refs/state
-  const isReducedMotion = typeof window !== "undefined" && window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const isInteractingRef = useRef(false);
-  const autoScrollDirectionRef = useRef<1 | -1>(1);
-  const autoScrollRAFRef = useRef<number | null>(null);
-  const pauseTimeoutRef = useRef<number | null>(null);
+  // Cursor-position controlled auto-scroll refs (desktop only)
+  const reducedMotionRef = useRef(false);
+  const cursorInsideRef = useRef(false);
+  const draggingRef = useRef(false);
+  const targetVelocityRef = useRef(0); // px/s
+  const currentVelocityRef = useRef(0); // px/s
+  const manualPauseUntilRef = useRef(0); // epoch ms
+  const rafRef = useRef<number | null>(null);
   const lastFrameTimeRef = useRef<number | null>(null);
-  // pixels per second (slow premium speed)
-  const speedRef = useRef(20); // ~20 px/s — calm and slow
+  const maxSpeedRef = useRef(58); // subtle premium max speed
+    // Autoplay when not hovered: slow, subtle movement and direction control
+    const autoplaySpeedRef = useRef(12); // px/s when not hovered
+    const autoDirectionRef = useRef(1); // 1 = right, -1 = left
 
-  const pauseAutoScrollTemporarily = (ms = 2000) => {
-    if (typeof window === "undefined") return;
-    isInteractingRef.current = true;
-    if (pauseTimeoutRef.current) window.clearTimeout(pauseTimeoutRef.current);
-    pauseTimeoutRef.current = window.setTimeout(() => {
-      isInteractingRef.current = false;
-      pauseTimeoutRef.current = null;
-    }, ms);
-  };
-
-  const stopAutoScroll = () => {
-    if (autoScrollRAFRef.current) cancelAnimationFrame(autoScrollRAFRef.current);
-    autoScrollRAFRef.current = null;
-    if (pauseTimeoutRef.current) {
-      window.clearTimeout(pauseTimeoutRef.current);
-      pauseTimeoutRef.current = null;
-    }
-    isInteractingRef.current = true;
-  };
-
-  const resumeAutoScroll = () => {
-    isInteractingRef.current = false;
+  const beginManualPause = (ms = 900) => {
+    manualPauseUntilRef.current = Date.now() + ms;
+    targetVelocityRef.current = 0;
+    currentVelocityRef.current = 0;
   };
 
   const featuredProjects = useMemo(
@@ -80,45 +66,60 @@ export function ProjectsSection({ onSelectProject }: ProjectsSectionProps) {
     track.addEventListener("scroll", handleScroll, { passive: true });
     window.addEventListener("resize", handleResize);
 
-    // Interaction handlers for pause/resume auto-scroll
-    const onPointerEnter = () => {
-      isInteractingRef.current = true;
-      if (pauseTimeoutRef.current) window.clearTimeout(pauseTimeoutRef.current);
+    const toVelocityFromClientX = (clientX: number) => {
+      const rect = track.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const raw = (clientX - centerX) / (rect.width / 2); // -1..1 nominal
+      const clamped = Math.max(-1, Math.min(1, raw));
+      const deadZone = 0.15;
+      if (Math.abs(clamped) <= deadZone) {
+        return 0;
+      }
+      const normalized = (Math.abs(clamped) - deadZone) / (1 - deadZone);
+      const curved = normalized * normalized; // smooth acceleration near edges
+      return Math.sign(clamped) * curved * maxSpeedRef.current;
     };
+
+    const onPointerEnter = (event: PointerEvent) => {
+      if (event.pointerType !== "mouse" || reducedMotionRef.current) return;
+      cursorInsideRef.current = true;
+      track.style.scrollSnapType = "none";
+      targetVelocityRef.current = toVelocityFromClientX(event.clientX);
+    };
+
+    const onPointerMove = (event: PointerEvent) => {
+      if (!cursorInsideRef.current || event.pointerType !== "mouse" || reducedMotionRef.current) return;
+      targetVelocityRef.current = toVelocityFromClientX(event.clientX);
+    };
+
     const onPointerLeave = () => {
-      // resume shortly after pointer leaves
-      if (pauseTimeoutRef.current) window.clearTimeout(pauseTimeoutRef.current);
-      pauseTimeoutRef.current = window.setTimeout(() => {
-        isInteractingRef.current = false;
-        pauseTimeoutRef.current = null;
-      }, 700);
+      cursorInsideRef.current = false;
+      targetVelocityRef.current = 0;
+      currentVelocityRef.current = 0;
+      track.style.scrollSnapType = "x mandatory";
     };
 
     const onPointerDown = () => {
-      isInteractingRef.current = true;
-      if (pauseTimeoutRef.current) window.clearTimeout(pauseTimeoutRef.current);
+      draggingRef.current = true;
+      beginManualPause(1000);
     };
 
     const onPointerUp = () => {
-      // resume after short delay
-      if (pauseTimeoutRef.current) window.clearTimeout(pauseTimeoutRef.current);
-      pauseTimeoutRef.current = window.setTimeout(() => {
-        isInteractingRef.current = false;
-        pauseTimeoutRef.current = null;
-      }, 900);
+      draggingRef.current = false;
+      beginManualPause(700);
     };
 
-    const onWheel = () => {
-      // user scroll via wheel — pause briefly
-      pauseAutoScrollTemporarily(1200);
-    };
+    const onWheel = () => beginManualPause(900);
 
     track.addEventListener("pointerenter", onPointerEnter);
+    track.addEventListener("pointermove", onPointerMove);
     track.addEventListener("pointerleave", onPointerLeave);
     track.addEventListener("pointerdown", onPointerDown, { passive: true });
     window.addEventListener("pointerup", onPointerUp);
+    window.addEventListener("pointercancel", onPointerUp);
     track.addEventListener("touchstart", onPointerDown, { passive: true });
     window.addEventListener("touchend", onPointerUp);
+    window.addEventListener("touchcancel", onPointerUp);
     track.addEventListener("wheel", onWheel, { passive: true });
 
     return () => {
@@ -126,12 +127,16 @@ export function ProjectsSection({ onSelectProject }: ProjectsSectionProps) {
       window.removeEventListener("resize", handleResize);
 
       track.removeEventListener("pointerenter", onPointerEnter);
+      track.removeEventListener("pointermove", onPointerMove);
       track.removeEventListener("pointerleave", onPointerLeave);
       track.removeEventListener("pointerdown", onPointerDown);
       window.removeEventListener("pointerup", onPointerUp);
+      window.removeEventListener("pointercancel", onPointerUp);
       track.removeEventListener("touchstart", onPointerDown as EventListener);
       window.removeEventListener("touchend", onPointerUp as EventListener);
+      window.removeEventListener("touchcancel", onPointerUp as EventListener);
       track.removeEventListener("wheel", onWheel as EventListener);
+      track.style.scrollSnapType = "x mandatory";
     };
   }, [updateArrowState]);
 
@@ -150,8 +155,8 @@ export function ProjectsSection({ onSelectProject }: ProjectsSectionProps) {
     const cardWidth = firstCard.getBoundingClientRect().width;
     const step = Math.round(cardWidth + gap);
 
-    // Pause auto-scroll briefly when user manually uses arrows
-    pauseAutoScrollTemporarily(1800);
+    // Temporarily prioritize manual navigation
+    beginManualPause(1200);
 
     // Use native smooth scroll where supported
     track.scrollBy({
@@ -162,85 +167,85 @@ export function ProjectsSection({ onSelectProject }: ProjectsSectionProps) {
     // After scrolling, arrow states are updated by the scroll listener
   };
 
-  // Auto-scroll animation loop (requestAnimationFrame)
+  // Cursor-position controlled auto-scroll loop
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (isReducedMotion) return; // respect reduced motion
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const setReducedMotion = () => {
+      reducedMotionRef.current = media.matches;
+      if (reducedMotionRef.current) {
+        targetVelocityRef.current = 0;
+        currentVelocityRef.current = 0;
+      }
+    };
 
-    let rafId: number | null = null;
-    let pollTimer: number | null = null;
-    let started = false;
+    setReducedMotion();
+    media.addEventListener("change", setReducedMotion);
 
-    const startLoop = () => {
+    const stepLoop = (time: number) => {
       const track = carouselRef.current;
-      if (!track) return false;
-
-      // Only start when there's something to scroll
-      if (track.scrollWidth <= track.clientWidth + 2) return false;
-
-      started = true;
-
-      const stepLoop = (time: number) => {
-        if (!lastFrameTimeRef.current) lastFrameTimeRef.current = time;
-        const last = lastFrameTimeRef.current!;
-        const dt = Math.min(0.05, (time - last) / 1000); // cap delta to avoid jumps
-        lastFrameTimeRef.current = time;
-
-        if (!isInteractingRef.current) {
-          const direction = autoScrollDirectionRef.current;
-          const speed = speedRef.current; // px per second
-          const delta = direction * speed * dt;
-
-          // perform scroll using pixel changes (no layout thrash)
-          const target = Math.max(0, Math.min(track.scrollLeft + delta, track.scrollWidth - track.clientWidth));
-          track.scrollLeft = target;
-
-          // Reverse direction smoothly at edges to avoid teleport
-          const maxScrollLeft = Math.max(0, track.scrollWidth - track.clientWidth);
-          if (track.scrollLeft <= 0 + 0.5) {
-            autoScrollDirectionRef.current = 1;
-          } else if (track.scrollLeft >= maxScrollLeft - 0.5) {
-            autoScrollDirectionRef.current = -1;
-          }
-        } else {
-          // Reset lastFrameTime so dt isn't huge when resuming
+      if (track) {
+        if (!lastFrameTimeRef.current) {
           lastFrameTimeRef.current = time;
         }
+        const dt = Math.min(0.05, (time - lastFrameTimeRef.current) / 1000);
+        lastFrameTimeRef.current = time;
 
-        rafId = requestAnimationFrame(stepLoop);
-        autoScrollRAFRef.current = rafId;
-      };
+        const maxScrollLeft = Math.max(0, track.scrollWidth - track.clientWidth);
+        const canMove = maxScrollLeft > 1;
+        const isPaused = Date.now() < manualPauseUntilRef.current;
 
-      rafId = requestAnimationFrame(stepLoop);
-      autoScrollRAFRef.current = rafId;
+        // Determine desired velocity:
+        // - If reduced motion, paused, dragging, or nothing to move => 0
+        // - If cursor inside => use cursor target velocity
+        // - Else => gentle autoplay using autoplaySpeedRef and autoDirectionRef
+        let desiredVelocity = 0;
+        if (!canMove || isPaused || reducedMotionRef.current || draggingRef.current) {
+          desiredVelocity = 0;
+        } else if (cursorInsideRef.current) {
+          desiredVelocity = targetVelocityRef.current;
+        } else {
+          desiredVelocity = autoplaySpeedRef.current * autoDirectionRef.current;
+        }
 
-      return true;
+        const smoothing = 1 - Math.exp(-10 * dt); // smooth accel/decel
+        currentVelocityRef.current += (desiredVelocity - currentVelocityRef.current) * smoothing;
+
+        if (Math.abs(currentVelocityRef.current) < 0.05) {
+          currentVelocityRef.current = 0;
+        }
+
+        if (currentVelocityRef.current !== 0) {
+          const next = track.scrollLeft + currentVelocityRef.current * dt;
+          const clamped = Math.max(0, Math.min(maxScrollLeft, next));
+          track.scrollLeft = clamped;
+
+          // If at edge and still pushing outwards, damp motion to avoid jitter.
+          if (
+            (clamped <= 0.5 && currentVelocityRef.current < 0) ||
+            (clamped >= maxScrollLeft - 0.5 && currentVelocityRef.current > 0)
+          ) {
+            // If autoplay (not cursor-controlled) then reverse direction smoothly
+            if (!cursorInsideRef.current && Math.abs(currentVelocityRef.current) > 0.5) {
+              autoDirectionRef.current *= -1;
+              // gently nudge velocity toward the new direction
+              currentVelocityRef.current = autoDirectionRef.current * Math.abs(currentVelocityRef.current) * 0.45;
+            } else {
+              currentVelocityRef.current *= 0.35;
+            }
+          }
+        }
+      }
+
+      rafRef.current = requestAnimationFrame(stepLoop);
     };
 
-    const tryStart = () => {
-      if (started) return;
-      if (startLoop()) return;
-      // otherwise poll until ready (carousel rendered or images loaded)
-      pollTimer = window.setTimeout(tryStart, 120);
-    };
-
-    tryStart();
-
-    // restart when window resized (content size may change)
-    const onResize = () => {
-      if (!started) return;
-      // if started, nothing; if not started, try starting again
-      if (!started) tryStart();
-    };
-
-    window.addEventListener("resize", onResize);
+    rafRef.current = requestAnimationFrame(stepLoop);
 
     return () => {
-      if (rafId) cancelAnimationFrame(rafId);
-      if (pollTimer) window.clearTimeout(pollTimer);
-      autoScrollRAFRef.current = null;
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
       lastFrameTimeRef.current = null;
-      window.removeEventListener("resize", onResize);
+      media.removeEventListener("change", setReducedMotion);
     };
   }, []);
 
